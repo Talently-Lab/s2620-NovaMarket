@@ -1,6 +1,4 @@
 
-export default function Home() {
-  return (
-    <div>Home</div>
-  )
-}
+export const Home = () => {
+  return <h1 className="text-3xl font-bold text-primary">Página de Inicio</h1>;
+};
