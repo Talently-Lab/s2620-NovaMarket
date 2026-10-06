@@ -1,4 +1,11 @@
+import { HeroBanner } from "../components/organisms/HeroBanner";
+import { FeatureList } from "../components/organisms/FeatureList";
 
 export const Home = () => {
-  return <h1 className="text-3xl font-bold text-primary">Página de Inicio</h1>;
+  return (
+    <div className="flex flex-col gap-6 w-full animate-fade-in">
+      <HeroBanner />
+      <FeatureList />
+    </div>
+  );
 };
