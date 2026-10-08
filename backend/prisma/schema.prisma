@@ -15,6 +15,7 @@ model User {
   passwordHash String   @map("password_hash")
   fullName     String   @map("full_name")
   role         Role     @default(CUSTOMER)
+  notActive    Boolean  @default(false) @map("not_active")
   createdAt    DateTime @default(now()) @map("created_at")
 
   carts  Cart[]
