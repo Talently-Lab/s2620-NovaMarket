@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { User, ShoppingCart, Menu, X } from 'lucide-react';
+import { User, ShoppingCart, Menu, X, LogOut } from 'lucide-react';
 import { SearchBar } from '../molecules/SearchBar';
 import { Badge } from '../atoms/Badge';
 import logo from '../../assets/novamarket-logo-horizontal-color.svg';
+import { AuthContext } from '../../context/AuthContext';
 
 export const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  const { user, logout } = useContext(AuthContext);
 
   return (
     <nav className="bg-neutral-white border-b border-gray-200 py-3 px-4 md:px-6 w-full relative z-50">
@@ -39,10 +42,26 @@ export const NavBar = () => {
           <Link to="/ofertas" className="hover:text-secondary transition-colors">Ofertas</Link>
           <Link to="/ayuda" className="hover:text-secondary transition-colors">Ayuda</Link>
           
-          <Link to="/cuenta" className="flex items-center gap-2 hover:text-secondary transition-colors ml-4">
-            <User size={20} />
-            <span>Mi cuenta</span>
-          </Link>
+          {user ? (
+            <div className="flex items-center gap-4 ml-4">
+              <Link to="/cuenta" className="flex items-center gap-2 hover:text-secondary transition-colors">
+                <User size={20} />
+                <span className="font-bold">Hola, {user.nombre || 'Usuario'}</span>
+              </Link>
+              <button 
+                onClick={logout} 
+                className="text-gray-400 hover:text-red-500 transition-colors"
+                title="Cerrar sesión"
+              >
+                <LogOut size={20} />
+              </button>
+            </div>
+          ) : (
+            <Link to="/login" className="flex items-center gap-2 hover:text-secondary transition-colors ml-4">
+              <User size={20} />
+              <span>Ingresar</span>
+            </Link>
+          )}
 
           <Link to="/checkout" className="flex items-center gap-2 hover:text-secondary transition-colors">
             <ShoppingCart size={20} />
@@ -66,10 +85,26 @@ export const NavBar = () => {
           
           <hr className="border-gray-100" />
           
-          <Link to="/cuenta" onClick={toggleMenu} className="flex items-center gap-3 text-base font-medium text-primary hover:text-secondary py-2">
-            <User size={22} />
-            <span>Mi cuenta</span>
-          </Link>
+          {user ? (
+            <div className="flex items-center gap-4 ml-4">
+              <Link to="/cuenta" className="flex items-center gap-2 hover:text-secondary transition-colors">
+                <User size={20} />
+                <span className="font-bold">Hola, {user.nombre || 'Usuario'}</span>
+              </Link>
+              <button 
+                onClick={logout} 
+                className="text-gray-400 hover:text-red-500 transition-colors"
+                title="Cerrar sesión"
+              >
+                <LogOut size={20} />
+              </button>
+            </div>
+          ) : (
+            <Link to="/login" className="flex items-center gap-2 hover:text-secondary transition-colors ml-4">
+              <User size={20} />
+              <span>Ingresar</span>
+            </Link>
+          )}
           
           <Link to="/checkout" onClick={toggleMenu} className="flex items-center justify-between text-base font-medium text-primary hover:text-secondary py-2">
             <div className="flex items-center gap-3">
