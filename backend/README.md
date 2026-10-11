@@ -25,6 +25,20 @@ El servidor escucha en el puerto definido en `PORT` y, si no está definido, en 
 
 La app usa `DATABASE_URL` (puerto 6543, Transaction Pooler) en runtime. La CLI de Prisma usa `DIRECT_URL` (puerto 5432) para las migraciones.
 
+## Datos de prueba (seed)
+
+El seed carga el catálogo de productos desde el CSV `mock_catalogo_productos.csv - mock_catalogo_productos.csv (1).csv`, ubicado en la raíz de `backend/`.
+
+```bash
+cd backend
+npx prisma migrate deploy   # solo si la base de datos es nueva
+npx prisma db seed
+```
+
+- Se puede ejecutar varias veces: omite los productos cuyo nombre ya existe en la tabla.
+- Del CSV se usan Nombre, Categoría, Precio Regular, Stock, Descripción, Imagen URL y Marca. Se ignoran ID (la tabla usa UUID), Precio Oferta y Activo.
+- El script está en `prisma/seed.js` y está registrado en `prisma.config.ts`.
+
 ## Formato de respuesta
 
 Salvo `/api/health`, todos los endpoints responden con la misma estructura.

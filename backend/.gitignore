@@ -6,4 +6,5 @@ node_modules
 
 # Documentación local
 *.md
+!README.md
 *.pdf
