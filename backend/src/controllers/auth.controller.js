@@ -24,4 +24,20 @@ const register = async (req, res) => {
   }
 };
 
-module.exports = { register };
+const login = async (req, res) => {
+  const { email, password } = req.body || {};
+
+  if ([email, password].some((v) => typeof v !== 'string' || !v.trim())) {
+    return errorResponse(res, 400, 'email y password son obligatorios');
+  }
+
+  try {
+    const data = await authService.loginUser({ email, password });
+    successResponse(res, 200, 'Sesión iniciada con éxito', data);
+  } catch (error) {
+    const message = error.statusCode ? error.message : 'Error al iniciar sesión';
+    errorResponse(res, error.statusCode || 500, message, error.message);
+  }
+};
+
+module.exports = { register, login };
