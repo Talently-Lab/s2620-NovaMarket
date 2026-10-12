@@ -12,8 +12,6 @@ API REST del e-commerce NovaMarket. Está organizada en tres capas (ruta, contro
 - dotenv y cors
 - nodemon en desarrollo
 
-## Puesta en marcha
-
 ```bash
 cd backend
 npm install
@@ -22,7 +20,6 @@ npm run dev
 ```
 
 El servidor escucha en el puerto definido en `PORT` y, si no está definido, en el 3000.
-
 La app usa `DATABASE_URL` (puerto 6543, Transaction Pooler) en runtime. La CLI de Prisma usa `DIRECT_URL` (puerto 5432) para las migraciones.
 
 ## Datos de prueba (seed)
@@ -31,13 +28,9 @@ El seed carga el catálogo de productos desde el CSV `mock_catalogo_productos.cs
 
 ```bash
 cd backend
-npx prisma migrate deploy   # solo si la base de datos es nueva
+npx prisma migrate deploy # solo si la base de datos es nueva
 npx prisma db seed
 ```
-
-- Se puede ejecutar varias veces: omite los productos cuyo nombre ya existe en la tabla.
-- Del CSV se usan Nombre, Categoría, Precio Regular, Stock, Descripción, Imagen URL y Marca. Se ignoran ID (la tabla usa UUID), Precio Oferta y Activo.
-- El script está en `prisma/seed.js` y está registrado en `prisma.config.ts`.
 
 ## Formato de respuesta
 
@@ -118,6 +111,48 @@ Errores:
 - `409` si el email ya está registrado
 - `500` si ocurre un error interno
 
+`POST /api/auth/login`
+
+Inicia sesión con email y contraseña y devuelve un token JWT.
+
+Body:
+
+```json
+{
+  "email": "ana@correo.com",
+  "password": "minimo8caracteres"
+}
+```
+
+Validaciones:
+
+- `email` y `password` son obligatorios y no pueden estar vacíos
+
+Respuesta `200`:
+
+```json
+{
+  "success": true,
+  "message": "Sesión iniciada con éxito",
+  "data": {
+    "token": "jwt",
+    "user": {
+      "id": "uuid",
+      "email": "ana@correo.com",
+      "fullName": "Ana Pérez",
+      "role": "CLIENTE"
+    }
+  }
+}
+```
+
+Errores:
+
+- `400` si falta algún campo
+- `401` con "Credenciales inválidas" si el email no existe o la contraseña es incorrecta (mismo mensaje en los dos casos para no revelar qué emails están registrados)
+- `403` con "Usuario inactivo" si el usuario tiene `not_active` activado
+- `500` si ocurre un error interno
+
 ### Productos
 
 Por ahora estas rutas no están protegidas con JWT. El precio se devuelve siempre como string con 2 decimales, por ejemplo `"49.90"`.
@@ -165,20 +200,6 @@ Todavía no hay validación en la capa de controlador para productos, así que c
 - Roles: solo CLIENTE (por defecto) y ADMIN. No hay rol de invitado.
 - Moneda: USD con Decimal(10,2). La API devuelve el precio siempre con 2 decimales.
 - Borrado lógico: columna `not_active` en usuarios. En la semana 3 o 4 se confirma si se aplica también a productos.
-
-## Completado
-
-- Modelo User en `prisma/schema.prisma` (`fullName` y `passwordHash`).
-- Hasheo de contraseñas con bcryptjs en el servicio de auth.
-- `POST /api/auth/register` con validación, token JWT y respuesta 409 si el email ya existe.
-- Middleware JWT para autorización Bearer.
-- `JWT_SECRET` configurado en las variables de entorno (`.env`).
-
-## Pendiente
-
-- `POST /api/auth/login`: debe responder "Credenciales inválidas" cuando falle el email o la contraseña, y rechazar el acceso si `not_active = true`.
-- `GET /api/auth/me`: ruta protegida que devuelve el usuario sin `passwordHash`.
-- Validar login y `/me` en Postman.
 
 ## A tener en cuenta
 
