@@ -14,4 +14,12 @@ const authenticate = (req, res, next) => {
   }
 };
 
-module.exports = { authenticate };
+// Debe usarse después de authenticate
+const authorize = (...roles) => (req, res, next) => {
+  if (!roles.includes(req.user?.role)) {
+    return errorResponse(res, 403, 'No tienes permisos para realizar esta acción');
+  }
+  next();
+};
+
+module.exports = { authenticate, authorize };

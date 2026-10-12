@@ -155,7 +155,7 @@ Errores:
 
 ### Productos
 
-Por ahora estas rutas no están protegidas con JWT. El precio se devuelve siempre como string con 2 decimales, por ejemplo `"49.90"`.
+Todas las rutas requieren el header `Authorization: Bearer <token>`. Cualquier usuario autenticado puede listar productos, pero solo un usuario con rol `ADMIN` puede crear, actualizar o eliminar. El precio se devuelve siempre como string con 2 decimales, por ejemplo `"49.90"`.
 
 Estructura de un producto:
 
@@ -189,11 +189,18 @@ Actualiza los campos que se envíen en el body. Responde `200` con el producto a
 
 Elimina el producto. Responde `200` con `{ "id": "uuid" }` en `data`.
 
-Todavía no hay validación en la capa de controlador para productos, así que cualquier fallo, incluido un id inexistente, se devuelve como `500`.
+Errores de autenticación y permisos:
+
+- `401` si falta el token o es inválido o expiró
+- `403` si el usuario no es `ADMIN` e intenta hacer `POST`, `PUT` o `DELETE`
+
+Todavía no hay validación en la capa de controlador para productos, así que cualquier otro fallo, incluido un id inexistente, se devuelve como `500`.
 
 ### Middleware de autenticación
 
-`src/middlewares/auth.middleware.js` exporta `authenticate`. Este middleware lee el header `Authorization: Bearer <token>`, valida el token y deja el payload (`id`, `email`, `role`) en `req.user`. Si falta el token responde `401` con "Token no proporcionado", y si el token es inválido o expiró responde `401` con "Token inválido o expirado".
+`src/middlewares/auth.middleware.js` exporta `authenticate` y `authorize`. `authenticate` lee el header `Authorization: Bearer <token>`, valida el token y deja el payload (`id`, `email`, `role`) en `req.user`. Si falta el token responde `401` con "Token no proporcionado", y si el token es inválido o expiró responde `401` con "Token inválido o expirado".
+
+`authorize(...roles)` se usa después de `authenticate` y comprueba que `req.user.role` esté entre los roles permitidos. Si no lo está, responde `403` con "No tienes permisos para realizar esta acción".
 
 ## Reglas generales
 
