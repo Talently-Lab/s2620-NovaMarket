@@ -8,6 +8,11 @@
   --color-neutral-light: #F5F7FA;
   --color-neutral-white: #FFFFFF;
 
+  /* Estados de error (ver Figma, página Desktop · fila «S4 · Estados») */
+  --color-error: #D92D20;        /* borde y mensaje de ayuda sobre blanco (4,8:1) */
+  --color-error-dark: #B42318;   /* texto sobre fondo rosa del aviso (5,7:1) */
+  --color-error-light: #FDECEA;  /* fondo de campo con error y del aviso */
+
   --font-spartan: "League Spartan", sans-serif;
   --font-inter: "Inter", sans-serif;
 }
