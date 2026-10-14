@@ -12,8 +12,11 @@ API REST del e-commerce NovaMarket. Está organizada en tres capas (ruta, contro
 - dotenv y cors
 - nodemon en desarrollo
 
+## Requisitos
+
+- Node.js 20.19 o superior (incluye npm)
+
 ```bash
-cd backend
 npm install
 npx prisma generate
 npm run dev
@@ -31,6 +34,8 @@ cd backend
 npx prisma migrate deploy # solo si la base de datos es nueva
 npx prisma db seed
 ```
+
+`npx prisma generate` manualmente después de cada migración (Prisma v7).
 
 ## Formato de respuesta
 
@@ -146,13 +151,6 @@ Respuesta `200`:
 }
 ```
 
-Errores:
-
-- `400` si falta algún campo
-- `401` con "Credenciales inválidas" si el email no existe o la contraseña es incorrecta (mismo mensaje en los dos casos para no revelar qué emails están registrados)
-- `403` con "Usuario inactivo" si el usuario tiene `not_active` activado
-- `500` si ocurre un error interno
-
 ### Productos
 
 Todas las rutas requieren el header `Authorization: Bearer <token>`. Cualquier usuario autenticado puede listar productos, pero solo un usuario con rol `ADMIN` puede crear, actualizar o eliminar. El precio se devuelve siempre como string con 2 decimales, por ejemplo `"49.90"`.
@@ -196,20 +194,12 @@ Errores de autenticación y permisos:
 
 Todavía no hay validación en la capa de controlador para productos, así que cualquier otro fallo, incluido un id inexistente, se devuelve como `500`.
 
-### Middleware de autenticación
-
-`src/middlewares/auth.middleware.js` exporta `authenticate` y `authorize`. `authenticate` lee el header `Authorization: Bearer <token>`, valida el token y deja el payload (`id`, `email`, `role`) en `req.user`. Si falta el token responde `401` con "Token no proporcionado", y si el token es inválido o expiró responde `401` con "Token inválido o expirado".
-
-`authorize(...roles)` se usa después de `authenticate` y comprueba que `req.user.role` esté entre los roles permitidos. Si no lo está, responde `403` con "No tienes permisos para realizar esta acción".
-
 ## Reglas generales
 
-- Roles: solo CLIENTE (por defecto) y ADMIN. No hay rol de invitado.
+- Roles: solo CLIENTE (por defecto)
 - Moneda: USD con Decimal(10,2). La API devuelve el precio siempre con 2 decimales.
 - Borrado lógico: columna `not_active` en usuarios. En la semana 3 o 4 se confirma si se aplica también a productos.
 
-## A tener en cuenta
+## .env
 
 - Variables de entorno necesarias: `DATABASE_URL`, `DIRECT_URL`, `JWT_SECRET` y `JWT_EXPIRES_IN`.
-- Hay que correr `npx prisma generate` manualmente después de cada migración (Prisma v7).
-- Migraciones aplicadas hasta el momento: `init`, `add_not_active_to_users` y `rename_role_customer_to_cliente`.

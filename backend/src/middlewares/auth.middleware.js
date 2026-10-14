@@ -14,7 +14,6 @@ const authenticate = (req, res, next) => {
   }
 };
 
-// Debe usarse después de authenticate
 const authorize = (...roles) => (req, res, next) => {
   if (!roles.includes(req.user?.role)) {
     return errorResponse(res, 403, 'No tienes permisos para realizar esta acción');
