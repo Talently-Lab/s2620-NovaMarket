@@ -4,6 +4,8 @@ import { Home } from './pages/Home';
 import { PrivateRoute } from './routes/PrivateRoute'; 
 import { LoginPage } from './pages/LoginPage'; 
 import { RegisterPage } from './pages/RegisterPage';
+import { ProductsPage } from './pages/ProductsPage';
+import { ProductDetailPage } from './pages/ProductDetailPage';
 
 export const App = () => {
   return (
@@ -16,7 +18,9 @@ export const App = () => {
         {/* RUTAS CON LAYOUT (NavBar y Footer) */}
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
-          <Route path="/categorias" element={<div>Categorías</div>} />
+          <Route path="/categorias" element={<ProductsPage />} />
+          <Route path="/categorias/:category" element={<ProductsPage />} />
+          <Route path="/producto/:id" element={<ProductDetailPage />} />
           
           {/* RUTAS PROTEGIDAS (Solo para usuarios logueados) */}
           <Route element={<PrivateRoute />}>
