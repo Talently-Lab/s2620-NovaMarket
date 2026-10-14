@@ -1,0 +1,5 @@
+-- RenameEnumValue
+ALTER TYPE "Role" RENAME VALUE 'CUSTOMER' TO 'CLIENTE';
+
+-- AlterTable
+ALTER TABLE "users" ALTER COLUMN "role" SET DEFAULT 'CLIENTE';
