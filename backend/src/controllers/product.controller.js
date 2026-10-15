@@ -3,10 +3,22 @@ const { successResponse, errorResponse } = require('../utils/response');
 
 const getAll = async (req, res) => {
   try {
-    const products = await productService.getAllProducts();
+    const products = await productService.getAllProducts(req.query.category);
     successResponse(res, 200, 'Productos obtenidos con éxito', products);
   } catch (error) {
     errorResponse(res, 500, 'Error al obtener productos', error.message);
+  }
+};
+
+const getById = async (req, res) => {
+  try {
+    const product = await productService.getProductById(req.params.id);
+    if (!product) {
+      return errorResponse(res, 404, 'Producto no encontrado');
+    }
+    successResponse(res, 200, 'Producto obtenido con éxito', product);
+  } catch (error) {
+    errorResponse(res, 500, 'Error al obtener producto', error.message);
   }
 };
 
@@ -37,4 +49,4 @@ const remove = async (req, res) => {
   }
 };
 
-module.exports = { getAll, create, update, remove };
+module.exports = { getAll, getById, create, update, remove };
