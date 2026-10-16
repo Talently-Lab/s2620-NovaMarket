@@ -153,7 +153,7 @@ Respuesta `200`:
 
 ### Productos
 
-Todas las rutas requieren el header `Authorization: Bearer <token>`. Cualquier usuario autenticado puede listar productos, pero solo un usuario con rol `ADMIN` puede crear, actualizar o eliminar. El precio se devuelve siempre como string con 2 decimales, por ejemplo `"49.90"`.
+Las rutas `GET` son públicas. `POST`, `PUT` y `DELETE` requieren el header `Authorization: Bearer <token>` de un usuario con rol `ADMIN`. El precio se devuelve siempre como string con 2 decimales, por ejemplo `"49.90"`.
 
 Estructura de un producto:
 
@@ -173,15 +173,19 @@ Estructura de un producto:
 
 `GET /api/products`
 
-Lista todos los productos. Responde `200` con un array de productos en `data`.
+Lista todos los productos. Acepta el query param opcional `category` para filtrar por categoría sin distinguir mayúsculas, por ejemplo `?category=periféricos`. Responde `200` con un array de productos en `data`.
+
+`GET /api/products/:id`
+
+Devuelve un producto por id. Responde `200` con el producto en `data` o `404` si no existe.
 
 `POST /api/products`
 
-Crea un producto. Son obligatorios `name`, `price` y `category`. Los campos `description`, `stock` (por defecto 0) e `imageUrl` son opcionales. Responde `201` con el producto creado.
+Crea un producto. Son obligatorios `name`, `price` y `category`. Los campos `description`, `stock` (por defecto 0), `imageUrl` y `brand` son opcionales. Responde `201` con el producto creado o `400` si el body es inválido.
 
 `PUT /api/products/:id`
 
-Actualiza los campos que se envíen en el body. Responde `200` con el producto actualizado.
+Actualiza los campos que se envíen en el body. Todos son opcionales, pero los que se envíen se validan igual que en `POST`. Responde `200` con el producto actualizado o `400` si el body es inválido o no trae ningún campo.
 
 `DELETE /api/products/:id`
 
@@ -192,7 +196,7 @@ Errores de autenticación y permisos:
 - `401` si falta el token o es inválido o expiró
 - `403` si el usuario no es `ADMIN` e intenta hacer `POST`, `PUT` o `DELETE`
 
-Todavía no hay validación en la capa de controlador para productos, así que cualquier otro fallo, incluido un id inexistente, se devuelve como `500`.
+Salvo en `POST`, todavía no hay validación en la capa de controlador para productos, así que cualquier otro fallo, incluido un id inexistente, se devuelve como `500`.
 
 ## Reglas generales
 
@@ -203,3 +207,12 @@ Todavía no hay validación en la capa de controlador para productos, así que c
 ## .env
 
 - Variables de entorno necesarias: `DATABASE_URL`, `DIRECT_URL`, `JWT_SECRET` y `JWT_EXPIRES_IN`.
+
+## Tests
+
+Los tests unitarios usan Jest y Supertest con el servicio mockeado, así que no se conectan a la base de datos.
+
+```bash
+cd backend
+npm test
+```

@@ -3,9 +3,15 @@ const prisma = require('../config/prisma');
 // Decimal pierde los ceros finales al serializar a JSON
 const formatProduct = (product) => ({ ...product, price: product.price.toFixed(2) });
 
-const getAllProducts = async () => {
-  const products = await prisma.product.findMany();
+const getAllProducts = async (category) => {
+  const where = category ? { category: { equals: category, mode: 'insensitive' } } : {};
+  const products = await prisma.product.findMany({ where });
   return products.map(formatProduct);
+};
+
+const getProductById = async (id) => {
+  const product = await prisma.product.findUnique({ where: { id } });
+  return product ? formatProduct(product) : null;
 };
 
 const createProduct = async (data) => {
@@ -21,4 +27,4 @@ const deleteProduct = async (id) => {
   return { id: deleted.id };
 };
 
-module.exports = { getAllProducts, createProduct, updateProduct, deleteProduct };
+module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct };
