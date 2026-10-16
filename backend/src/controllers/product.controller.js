@@ -1,5 +1,6 @@
 const productService = require('../services/product.service');
 const { successResponse, errorResponse } = require('../utils/response');
+const { validateCreateProduct } = require('../validators/product.validator');
 
 const getAll = async (req, res) => {
   try {
@@ -23,8 +24,15 @@ const getById = async (req, res) => {
 };
 
 const create = async (req, res) => {
+  const body = req.body ?? {};
+  const errors = validateCreateProduct(body);
+  if (errors.length) {
+    return errorResponse(res, 400, 'Datos de producto inválidos', `VALIDATION_ERROR: ${errors.join(', ')}`);
+  }
+
+  const { name, description, price, stock = 0, imageUrl, category, brand } = body;
   try {
-    const product = await productService.createProduct(req.body);
+    const product = await productService.createProduct({ name, description, price, stock, imageUrl, category, brand });
     successResponse(res, 201, 'Producto creado con éxito', product);
   } catch (error) {
     errorResponse(res, 500, 'Error al crear producto', error.message);
