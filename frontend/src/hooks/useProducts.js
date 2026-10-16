@@ -16,9 +16,9 @@ export const useProducts = (initialCategory = 'Todos') => {
       try {
         const data = await productService.getProducts(selectedCategory);
         setProducts(Array.isArray(data) ? data : []);
-      } catch (error) {
-        console.error('Error al obtener productos:', error);
-        setError('Hubo un problema al cargar el catálogo.');
+      } catch (err) {
+        const backendMsg = err.response?.data?.message;
+        setError(backendMsg || 'Hubo un problema al cargar el catálogo.');
         setProducts([]);
       } finally {
         setLoading(false);
