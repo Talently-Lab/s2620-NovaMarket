@@ -185,7 +185,7 @@ Crea un producto. Son obligatorios `name`, `price` y `category`. Los campos `des
 
 `PUT /api/products/:id`
 
-Actualiza los campos que se envíen en el body. Responde `200` con el producto actualizado.
+Actualiza los campos que se envíen en el body. Todos son opcionales, pero los que se envíen se validan igual que en `POST`. Responde `200` con el producto actualizado o `400` si el body es inválido o no trae ningún campo.
 
 `DELETE /api/products/:id`
 
