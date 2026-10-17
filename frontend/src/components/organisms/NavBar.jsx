@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { User, ShoppingCart, Menu, X, LogOut } from 'lucide-react';
+import { User, ShoppingCart, Menu, X } from 'lucide-react';
 import { SearchBar } from '../molecules/SearchBar';
 import { Badge } from '../atoms/Badge';
 import logo from '../../assets/novamarket-logo-horizontal-color.svg';
@@ -48,12 +48,11 @@ export const NavBar = () => {
                 <User size={20} />
                 <span className="font-bold">Hola, {user.nombre || 'Usuario'}</span>
               </Link>
-              <button 
-                onClick={logout} 
-                className="text-gray-400 hover:text-red-500 transition-colors"
-                title="Cerrar sesión"
+              <button
+                onClick={logout}
+                className="text-sm font-semibold text-gray-500 hover:text-error transition-colors"
               >
-                <LogOut size={20} />
+                Salir
               </button>
             </div>
           ) : (
@@ -91,12 +90,11 @@ export const NavBar = () => {
                 <User size={20} />
                 <span className="font-bold">Hola, {user.nombre || 'Usuario'}</span>
               </Link>
-              <button 
-                onClick={logout} 
-                className="text-gray-400 hover:text-red-500 transition-colors"
-                title="Cerrar sesión"
+              <button
+                onClick={logout}
+                className="text-sm font-semibold text-gray-500 hover:text-error transition-colors"
               >
-                <LogOut size={20} />
+                Salir
               </button>
             </div>
           ) : (

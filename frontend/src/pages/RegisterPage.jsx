@@ -1,19 +1,21 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from "lucide-react";
 import { Button } from '../components/atoms/Button';
+import { AlertError } from '../components/atoms/AlertError';
+import { FormField } from '../components/molecules/FormField';
 import { useRegister } from '../hooks/useRegister';
 
 export const RegisterPage = () => {
   // Consumimos toda la lógica desde el custom hook
-  const { error, loading, handleChange, handleSubmit } = useRegister();
+  const { formData, fieldErrors, error, submitting, handleChange, handleSubmit } = useRegister();
 
   return (
     <div className="w-full min-h-[calc(100vh-200px)] flex flex-col items-center justify-center px-4 py-10 animate-fade-in">
-      
+
       <div className="w-full max-w-md">
         {/* Botón de regresar */}
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-primary transition-colors mb-4"
         >
           <ArrowLeft size={16} />
@@ -25,53 +27,55 @@ export const RegisterPage = () => {
           <h2 className="font-spartan font-bold text-3xl text-primary mb-2 text-center">Crear cuenta</h2>
           <p className="font-inter text-gray-500 text-sm mb-6 text-center">Únete a NovaMarket y mejora tu setup</p>
 
-          {error && <div className="bg-red-50 text-red-500 p-3 rounded-lg text-sm mb-4">{error}</div>}
+          <AlertError>{error}</AlertError>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1">
-              <label className="font-inter text-sm font-medium text-primary">Nombre completo</label>
-              <input 
-                type="text" 
-                name="nombre" 
-                required
-                onChange={handleChange}
-                className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="font-inter text-sm font-medium text-primary">Email</label>
-              <input 
-                type="email" 
-                name="email" 
-                required
-                onChange={handleChange}
-                className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="font-inter text-sm font-medium text-primary">Contraseña</label>
-              <input 
-                type="password" 
-                name="password" 
-                required
-                onChange={handleChange}
-                className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="font-inter text-sm font-medium text-primary">Confirmar Contraseña</label>
-              <input 
-                type="password" 
-                name="confirmPassword" 
-                required
-                onChange={handleChange}
-                className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all"
-              />
-            </div>
+            <FormField
+              id="register-nombre"
+              label="Nombre completo"
+              name="nombre"
+              value={formData.nombre}
+              onChange={handleChange}
+              autoComplete="name"
+              disabled={submitting}
+            />
+            <FormField
+              id="register-email"
+              label="Email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              autoComplete="email"
+              error={fieldErrors.email}
+              disabled={submitting}
+            />
+            <FormField
+              id="register-password"
+              label="Contraseña"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              autoComplete="new-password"
+              error={fieldErrors.password}
+              disabled={submitting}
+            />
+            <FormField
+              id="register-confirm"
+              label="Confirmar Contraseña"
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              autoComplete="new-password"
+              error={fieldErrors.confirmPassword}
+              disabled={submitting}
+            />
 
             <div className="mt-2">
-              <Button variant="secondary" type="submit" disabled={loading}>
-                {loading ? 'Creando cuenta...' : 'Registrarse'}
+              <Button variant="secondary" type="submit" fullWidth loading={submitting}>
+                {submitting ? 'Creando cuenta...' : 'Registrarse'}
               </Button>
             </div>
           </form>
