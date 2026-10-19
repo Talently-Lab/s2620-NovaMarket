@@ -1,6 +1,8 @@
 require('dotenv').config();
 const prisma = require('../src/config/prisma');
 
+const categories = [{ name: 'Periféricos' }, { name: 'Gadgets' }];
+
 const products = [
   { name: 'Rastreador inteligente compacto', category: 'Wearables', price: '13.9', stock: 50, description: 'Rastreador de objetos con conectividad inalámbrica.', imageUrl: 'https://cdn.novamarket.com/images/101.jpg', brand: 'Zonic' },
   { name: 'Dispositivo de streaming HD compacto', category: 'Monitores y TV', price: '42.2', stock: 185, description: 'Reproductor multimedia para streaming en alta definición.', imageUrl: 'https://cdn.novamarket.com/images/102.jpg', brand: 'StreamX' },
@@ -25,6 +27,9 @@ const products = [
 ];
 
 const main = async () => {
+  const { count: categoryCount } = await prisma.category.createMany({ data: categories, skipDuplicates: true });
+  console.log(`Categorías: ${categories.length}, insertadas: ${categoryCount}`);
+
   const dbCategories = await prisma.category.findMany({ select: { id: true, name: true } });
   const categoryIds = new Map(dbCategories.map((c) => [c.name, c.id]));
 
