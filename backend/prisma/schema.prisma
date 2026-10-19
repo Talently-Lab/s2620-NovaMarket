@@ -30,6 +30,19 @@ enum Role {
 }
 
 // --------------------------------------
+// CATEGORÍAS
+// --------------------------------------
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+
+  products Product[]
+
+  @@map("categories")
+}
+
+// --------------------------------------
 // PRODUCTOS
 // --------------------------------------
 model Product {
@@ -39,8 +52,10 @@ model Product {
   price       Decimal  @db.Decimal(10, 2)
   stock       Int      @default(0)
   imageUrl    String?  @map("image_url")
-  category    String
+  categoryId  Int      @map("category_id")
+  category    Category @relation(fields: [categoryId], references: [id])
   brand       String?
+  notActive   Boolean  @default(false) @map("not_active")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 

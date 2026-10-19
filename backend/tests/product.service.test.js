@@ -5,7 +5,7 @@ jest.mock('../src/config/prisma', () => ({
 const prisma = require('../src/config/prisma');
 const { getAllProducts, getProductById } = require('../src/services/product.service');
 
-const dbProduct = { id: 'uuid-1', name: 'Teclado', price: 49.9, stock: 10, category: 'Periféricos' };
+const dbProduct = { id: 'uuid-1', name: 'Teclado', price: 49.9, stock: 10, categoryId: 1000, category: { id: 1000, name: 'Periféricos' } };
 
 describe('productService.getAllProducts', () => {
   beforeEach(() => {
@@ -17,7 +17,7 @@ describe('productService.getAllProducts', () => {
 
     await getAllProducts();
 
-    expect(prisma.product.findMany).toHaveBeenCalledWith({ where: {} });
+    expect(prisma.product.findMany).toHaveBeenCalledWith({ where: {}, include: { category: true } });
   });
 
   it('debe filtrar por categoría sin distinguir mayúsculas', async () => {
@@ -26,7 +26,8 @@ describe('productService.getAllProducts', () => {
     await getAllProducts('perifericos');
 
     expect(prisma.product.findMany).toHaveBeenCalledWith({
-      where: { category: { equals: 'perifericos', mode: 'insensitive' } },
+      where: { category: { name: { equals: 'perifericos', mode: 'insensitive' } } },
+      include: { category: true },
     });
   });
 
@@ -50,7 +51,7 @@ describe('productService.getProductById', () => {
 
     const result = await getProductById('uuid-1');
 
-    expect(prisma.product.findUnique).toHaveBeenCalledWith({ where: { id: 'uuid-1' } });
+    expect(prisma.product.findUnique).toHaveBeenCalledWith({ where: { id: 'uuid-1' }, include: { category: true } });
     expect(result).toEqual({ ...dbProduct, price: '49.90' });
   });
 

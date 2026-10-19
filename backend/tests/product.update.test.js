@@ -24,7 +24,7 @@ const existing = {
   price: 49.9,
   stock: 10,
   imageUrl: null,
-  category: 'Periféricos',
+  categoryId: 1000,
   brand: null,
 };
 

@@ -19,8 +19,8 @@ const productService = require('../src/services/product.service');
 const timestamp = '2026-10-16T00:00:00.000Z';
 
 const products = [
-  { id: 'uuid-1', name: 'Teclado', price: '49.90', stock: 10, category: 'Periféricos', createdAt: timestamp, updatedAt: timestamp },
-  { id: 'uuid-2', name: 'Monitor', price: '199.00', stock: 3, category: 'Pantallas', createdAt: timestamp, updatedAt: timestamp },
+  { id: 'uuid-1', name: 'Teclado', price: '49.90', stock: 10, categoryId: 1000, category: { id: 1000, name: 'Periféricos' }, createdAt: timestamp, updatedAt: timestamp },
+  { id: 'uuid-2', name: 'Monitor', price: '199.00', stock: 3, categoryId: 1001, category: { id: 1001, name: 'Pantallas' }, createdAt: timestamp, updatedAt: timestamp },
 ];
 
 describe('GET /api/products', () => {

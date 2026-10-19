@@ -25,9 +25,14 @@ const products = [
 ];
 
 const main = async () => {
+  const dbCategories = await prisma.category.findMany({ select: { id: true, name: true } });
+  const categoryIds = new Map(dbCategories.map((c) => [c.name, c.id]));
+
   const existing = await prisma.product.findMany({ select: { name: true } });
   const existingNames = new Set(existing.map((p) => p.name));
-  const data = products.filter((p) => !existingNames.has(p.name));
+  const data = products
+    .filter((p) => !existingNames.has(p.name))
+    .map(({ category, ...product }) => ({ ...product, categoryId: categoryIds.get(category) }));
 
   const { count } = await prisma.product.createMany({ data });
   console.log(`Productos: ${products.length}, ya existentes: ${products.length - data.length}, insertados: ${count}`);

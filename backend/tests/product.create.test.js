@@ -33,7 +33,7 @@ describe('POST /api/products', () => {
   it('debe retornar 400 si faltan campos obligatorios o el precio es inválido', async () => {
     const res = await request(app)
       .post('/api/products')
-      .send({ price: -5, category: 'Periféricos' });
+      .send({ price: -5, categoryId: 1000 });
 
     expect(res.status).toBe(400);
     expect(res.body.success).toBe(false);
@@ -49,7 +49,7 @@ describe('POST /api/products', () => {
       price: 49.9,
       stock: 10,
       imageUrl: 'https://example.com/teclado.png',
-      category: 'Periféricos',
+      categoryId: 1000,
       brand: 'Keychron',
     };
 
@@ -67,13 +67,24 @@ describe('POST /api/products', () => {
   it('debe retornar 201 y aplicar el stock por defecto (0) si solo se envían los campos requeridos', async () => {
     const res = await request(app)
       .post('/api/products')
-      .send({ name: 'Mouse', price: 0, category: 'Periféricos' });
+      .send({ name: 'Mouse', price: 0, categoryId: 1000 });
 
     expect(res.status).toBe(201);
     expect(res.body.success).toBe(true);
     expect(res.body.data.stock).toBe(0);
     expect(productService.createProduct).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'Mouse', price: 0, category: 'Periféricos', stock: 0 })
+      expect.objectContaining({ name: 'Mouse', price: 0, categoryId: 1000, stock: 0 })
     );
+  });
+
+  it('debe retornar 400 si la categoría no existe', async () => {
+    productService.createProduct.mockRejectedValue(Object.assign(new Error('FK'), { code: 'P2003' }));
+
+    const res = await request(app)
+      .post('/api/products')
+      .send({ name: 'Mouse', price: 10, categoryId: 9999 });
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toBe('Categoría inexistente');
   });
 });
