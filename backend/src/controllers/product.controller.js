@@ -54,6 +54,9 @@ const update = async (req, res) => {
     const product = await productService.updateProduct(req.params.id, { name, description, price, stock, imageUrl, categoryId, brand });
     successResponse(res, 200, 'Producto actualizado con éxito', product);
   } catch (error) {
+    if (error.code === 'P2025') {
+      return errorResponse(res, 404, 'Producto no encontrado');
+    }
     if (error.code === 'P2003') {
       return errorResponse(res, 400, 'Categoría inexistente');
     }
@@ -66,6 +69,9 @@ const remove = async (req, res) => {
     const data = await productService.deleteProduct(req.params.id);
     successResponse(res, 200, 'Producto eliminado con éxito', data);
   } catch (error) {
+    if (error.code === 'P2025') {
+      return errorResponse(res, 404, 'Producto no encontrado');
+    }
     errorResponse(res, 500, 'Error al eliminar producto', error.message);
   }
 };
