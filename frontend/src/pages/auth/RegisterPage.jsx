@@ -1,19 +1,17 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from "lucide-react";
-import { Button } from '../components/atoms/Button';
-import { AlertError } from '../components/atoms/AlertError';
-import { FormField } from '../components/molecules/FormField';
-import { useRegister } from '../hooks/useRegister';
+import { Button } from '../../components/atoms/Button';
+import { AlertError } from '../../components/atoms/AlertError';
+import { FormField } from '../../components/molecules/FormField';
+import { useRegister } from '../../hooks/useRegister';
 
 export const RegisterPage = () => {
-  // Consumimos toda la lógica desde el custom hook
   const { formData, fieldErrors, error, submitting, handleChange, handleSubmit } = useRegister();
 
   return (
     <div className="w-full min-h-[calc(100vh-200px)] flex flex-col items-center justify-center px-4 py-10 animate-fade-in">
 
       <div className="w-full max-w-md">
-        {/* Botón de regresar */}
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-primary transition-colors mb-4"
@@ -22,7 +20,6 @@ export const RegisterPage = () => {
           Volver al inicio
         </Link>
 
-        {/* Tarjeta del formulario */}
         <div className="bg-neutral-white p-8 rounded-2xl shadow-lg border border-gray-100">
           <h2 className="font-spartan font-bold text-3xl text-primary mb-2 text-center">Crear cuenta</h2>
           <p className="font-inter text-gray-500 text-sm mb-6 text-center">Únete a NovaMarket y mejora tu setup</p>
@@ -88,4 +85,5 @@ export const RegisterPage = () => {
 
     </div>
   );
+  
 };

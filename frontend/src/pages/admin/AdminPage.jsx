@@ -1,7 +1,7 @@
 import { Plus, Pencil, Trash2, Package } from 'lucide-react';
-import { useAdminProducts } from '../hooks/useAdminProducts';
-import { ProductFormModal } from '../components/organisms/ProductFormModal';
-import { Button } from '../components/atoms/Button';
+import { useAdminProducts } from '../../hooks/useAdminProducts';
+import { ProductFormModal } from '../../components/organisms/ProductFormModal';
+import { Button } from '../../components/atoms/Button';
 
 export const AdminPage = () => {
   const {
@@ -126,7 +126,7 @@ export const AdminPage = () => {
 
                       <td className="py-3.5 px-4">
                         <span className="inline-block bg-[#F0F4F8] text-secondary text-xs font-semibold px-2.5 py-1 rounded-full">
-                          {product.category}
+                          {typeof product.category === 'object' ? product.category?.name : product.category}
                         </span>
                       </td>
 
