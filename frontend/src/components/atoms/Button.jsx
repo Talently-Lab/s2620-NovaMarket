@@ -1,36 +1,30 @@
-import { Spinner } from "./Spinner";
-
 export const Button = ({
   children,
-  onClick,
   variant = 'primary',
-  type = 'button',
-  disabled = false,
-  loading = false,
   fullWidth = false,
+  className = '',
+  type = 'button',
+  ...props
 }) => {
-  const baseStyle = "cursor-pointer font-inter font-semibold py-2.5 px-6 rounded-lg transition-colors duration-200 inline-flex items-center justify-center gap-2";
-  const width = fullWidth ? "w-full" : "w-fit";
+  const baseStyles =
+    'cursor-pointer font-inter font-semibold py-2.5 px-6 rounded-lg transition-colors duration-200 inline-flex items-center justify-center gap-2';
 
   const variants = {
-    primary: "bg-neutral-white text-primary hover:bg-gray-200",
-    secondary: "bg-primary text-neutral-white hover:bg-opacity-90",
+    primary: 'bg-neutral-white text-primary hover:bg-gray-200',
+    secondary: 'bg-secondary text-neutral-white hover:bg-secondary/90',
+    outline: 'border border-white/20 bg-white/5 hover:bg-white/10 text-neutral-white backdrop-blur-sm',
+    ghost: 'text-neutral-white/90 hover:text-neutral-white hover:bg-white/5',
   };
 
-  // Mientras carga o está deshabilitado no responde a clics
-  const inactive = disabled || loading;
-  const inactiveStyle = inactive ? "cursor-not-allowed" : "";
-  const disabledStyle = disabled && !loading ? "opacity-60" : "";
+  // Si fullWidth es true, toma w-full; si no, mantiene w-fit por defecto
+  const widthStyle = fullWidth ? 'w-full' : 'w-fit';
 
   return (
     <button
       type={type}
-      className={`${baseStyle} ${width} ${variants[variant]} ${inactiveStyle} ${disabledStyle}`}
-      onClick={onClick}
-      disabled={inactive}
-      aria-busy={loading || undefined}
+      className={`${baseStyles} ${variants[variant] || variants.primary} ${widthStyle} ${className}`}
+      {...props}
     >
-      {loading && <Spinner size={18} />}
       {children}
     </button>
   );
