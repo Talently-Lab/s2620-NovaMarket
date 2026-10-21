@@ -1,36 +1,67 @@
-import { useState, useEffect } from 'react';
-import { productService } from '../services/productService';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { productService } from "../services/productService";
 
-const CATEGORIES = ['Todos', 'Accesorios', 'Periféricos', 'Gadgets'];
+const CATEGORIES = [
+  "Todos",
+  "Gaming",
+  "Home Office",
+  "Periféricos",
+  "Audio",
+  "Monitores",
+  "Accesorios",
+];
 
-export const useProducts = (initialCategory = 'Todos') => {
+export const useProducts = (initialCategory = "Todos") => {
+  const [allProducts, setAllProducts] = useState([]);
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
-      setLoading(true);
-      setError(null);
       try {
-        const data = await productService.getProducts(selectedCategory);
-        setProducts(Array.isArray(data) ? data : []);
+        setLoading(true);
+        const data = await productService.getProducts(); 
+        const list = data?.data || data || [];
+        setAllProducts(list);
+        setProducts(list);
       } catch (err) {
-        const backendMsg = err.response?.data?.message;
-        setError(backendMsg || 'Hubo un problema al cargar el catálogo.');
-        setProducts([]);
+        setError("No pudimos cargar los productos. Intentá de nuevo más tarde.");
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProducts();
-  }, [selectedCategory]);
+  }, []);
+
+  useEffect(() => {
+    if (allProducts.length === 0) return;
+
+    if (!initialCategory || initialCategory === "Todos") {
+      setProducts(allProducts);
+      setSelectedCategory("Todos");
+    } else {
+      const filtered = allProducts.filter((p) => {
+        const cat = p.category?.name || p.category;
+        return cat?.toLowerCase() === initialCategory.toLowerCase();
+      });
+      setProducts(filtered);
+      setSelectedCategory(initialCategory);
+    }
+  }, [initialCategory, allProducts]);
 
   const handleCategoryChange = (category) => {
-    if (category !== selectedCategory) {
-      setSelectedCategory(category);
+    setSelectedCategory(category);
+    if (category === "Todos") {
+      navigate("/categorias");
+    } else {
+      navigate(`/categorias/${category.toLowerCase()}`);
     }
   };
 
@@ -40,6 +71,7 @@ export const useProducts = (initialCategory = 'Todos') => {
     selectedCategory,
     loading,
     error,
-    handleCategoryChange
+    handleCategoryChange,
   };
+
 };

@@ -9,30 +9,27 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
     config => {
         const token = localStorage.getItem('token');
-
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
-
         return config;
     },
     error => Promise.reject(error)
 );
 
-
 export const authService = {
     login: async credentials => {
         const response = await axiosInstance.post('/login', credentials);
-        return response.data;
+        return response.data?.data || response.data;
     },
 
     register: async userData => {
         const response = await axiosInstance.post('/register', userData);
-        return response.data;
+        return response.data?.data || response.data;
     },
 
     getMe: async () => {
         const response = await axiosInstance.get('/me');
-        return response.data;
+        return response.data?.data || response.data;
     }
-}
+};

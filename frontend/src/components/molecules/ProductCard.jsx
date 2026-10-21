@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import { Button } from '../atoms/Button';
+import { Link } from "react-router-dom";
+import { Button } from "../atoms/Button";
 
 export const ProductCard = ({
   id,
@@ -8,9 +8,9 @@ export const ProductCard = ({
   price,
   imageUrl,
   category,
-  imageIcon
+  imageIcon,
 }) => {
-  const fallbackImage = `https://picsum.photos/seed/novamarket-${id}/400/300`;
+  const fallbackImage = `https://placehold.co/400x300/F4F7FB/8592A3?text=Sin+Imagen`;
 
   const handleImageError = (e) => {
     e.target.onerror = null;
@@ -20,7 +20,7 @@ export const ProductCard = ({
   const formattedPrice =
     price !== undefined && price !== null
       ? `USD ${Number(price).toFixed(2)}`
-      : '';
+      : "";
 
   return (
     <div className="flex flex-col bg-neutral-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow flex-1 min-w-60">
@@ -40,7 +40,7 @@ export const ProductCard = ({
       <div className="p-4 flex flex-col gap-1 flex-1">
         {category && (
           <span className="font-inter text-[11px] font-semibold text-secondary uppercase tracking-wider">
-            {category}
+            {typeof category === "object" ? category?.name : category}
           </span>
         )}
 
@@ -60,7 +60,7 @@ export const ProductCard = ({
 
         {id && (
           <Link to={`/producto/${id}`} className="mt-auto pt-3">
-            <Button variant="secondary" className="w-full text-sm py-2">
+            <Button variant="secondary" fullWidth className="text-sm py-2">
               Ver detalle
             </Button>
           </Link>

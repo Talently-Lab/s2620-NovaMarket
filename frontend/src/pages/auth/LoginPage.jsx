@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "../components/atoms/Button";
-import { AlertError } from "../components/atoms/AlertError";
-import { FormField } from "../components/molecules/FormField";
-import { useLogin } from "../hooks/useLogin";
+import { Button } from "../../components/atoms/Button";
+import { AlertError } from "../../components/atoms/AlertError";
+import { FormField } from "../../components/molecules/FormField";
+import { useLogin } from "../../hooks/useLogin";
 
 export const LoginPage = () => {
   const { credentials, submitting, error, handleChange, handleSubmit } = useLogin();

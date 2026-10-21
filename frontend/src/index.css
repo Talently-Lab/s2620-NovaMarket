@@ -30,4 +30,37 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-spartan);
   }
+
+  @keyframes rgbWave {
+  0%, 100% {
+    background-color: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: none;
+    transform: translateY(0);
+  }
+  20% {
+    background-color: rgba(59, 130, 246, 0.28);
+    border-color: rgba(59, 130, 246, 0.7);
+    box-shadow: 0 0 16px rgba(59, 130, 246, 0.45);
+    transform: translateY(-2px);
+  }
+  40% {
+    background-color: rgba(250, 204, 21, 0.26);
+    border-color: rgba(250, 204, 21, 0.7);
+    box-shadow: 0 0 18px rgba(250, 204, 21, 0.4);
+    transform: translateY(-1px);
+  }
+  65% {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+    transform: translateY(0);
+  }
+}
+
+.animate-rgb-wave {
+  animation-name: rgbWave;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
 }

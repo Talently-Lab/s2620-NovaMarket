@@ -1,13 +1,16 @@
 import { PackageSearch } from "lucide-react";
-import { useProducts } from "../hooks/useProducts";
-import { ProductCard } from "../components/molecules/ProductCard";
-import { ProductCardSkeleton } from "../components/molecules/ProductCardSkeleton";
-import { Button } from "../components/atoms/Button";
+import { useParams } from "react-router-dom";
+import { useProducts } from "../../hooks/useProducts";
+import { ProductCard } from "../../components/molecules/ProductCard";
+import { ProductCardSkeleton } from "../../components/molecules/ProductCardSkeleton";
+import { Button } from "../../components/atoms/Button";
 
 const MARKETING_EMPTY_TEXT =
   "¡Ups! Por el momento no encontramos productos en esta categoría, pero estamos preparando nuevos ingresos para potenciar tu setup. ¡Explorá el resto de nuestro catálogo!";
 
 export const ProductsPage = () => {
+  const { category: urlCategory } = useParams();
+
   const {
     products,
     categories,
@@ -15,7 +18,7 @@ export const ProductsPage = () => {
     loading,
     error,
     handleCategoryChange,
-  } = useProducts();
+  } = useProducts(urlCategory || "Todos");
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 md:px-6 py-8 flex flex-col gap-8 animate-fade-in">
@@ -29,33 +32,28 @@ export const ProductsPage = () => {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          {categories.map((category) => {
-            const isActive = selectedCategory === category;
-
-            return (
-              <button
-                key={category}
-                onClick={() => handleCategoryChange(category)}
-                disabled={loading}
-                className={`px-4 py-2 rounded-xl font-inter text-sm font-semibold transition-all cursor-pointer ${
-                  isActive
-                    ? "bg-secondary text-white shadow-sm scale-105"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-primary"
-                } ${loading ? "opacity-60 cursor-not-allowed" : ""}`}
-              >
-                {category}
-              </button>
-            );
-          })}
-
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => handleCategoryChange(cat)}
+              className={`min-h-11 px-4 py-2 whitespace-nowrap rounded-lg font-inter text-sm font-semibold transition-colors ${
+                selectedCategory === cat
+                  ? "bg-primary text-neutral-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
+
       </div>
 
       {/* Estado de Error */}
       {error && (
         <div className="bg-red-50 text-red-500 p-4 rounded-xl text-center font-inter text-sm">
-            {error}
+          {error}
         </div>
       )}
 
@@ -78,15 +76,13 @@ export const ProductsPage = () => {
           <p className="font-inter text-sm text-gray-500 mb-6 leading-relaxed">
             {MARKETING_EMPTY_TEXT}
           </p>
-          <Button 
-            variant="secondary" 
-            onClick={() => handleCategoryChange('Todos')}
+          <Button
+            variant="secondary"
+            onClick={() => handleCategoryChange("Todos")}
           >
             Ver todos los productos
           </Button>
-
         </div>
-
       ) : (
         /* Grilla Responsiva de Productos */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -94,9 +90,7 @@ export const ProductsPage = () => {
             <ProductCard key={product.id} {...product} />
           ))}
         </div>
-        
       )}
-
     </div>
   );
 };
