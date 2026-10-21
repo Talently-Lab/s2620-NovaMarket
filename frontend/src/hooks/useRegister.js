@@ -9,17 +9,16 @@ export const useRegister = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({ nombre: '', email: '', password: '', confirmPassword: '' });
-  // Errores por campo: { email?, password?, confirmPassword? } y un error general
   const [fieldErrors, setFieldErrors] = useState({});
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
+
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    // Al corregir un campo se limpia su error. Si se cambia la contraseña,
-    // también se limpia el «no coinciden» de la confirmación (se revalida al enviar).
     const limpiar = { [name]: undefined };
+    
     if (name === 'password') limpiar.confirmPassword = undefined;
     if (Object.keys(limpiar).some((campo) => fieldErrors[campo])) {
       setFieldErrors({ ...fieldErrors, ...limpiar });
@@ -51,9 +50,8 @@ export const useRegister = () => {
 
     try {
       setSubmitting(true);
-      // confirmPassword es solo de la pantalla: no se envía al servidor
       const { nombre, email, password } = formData;
-      await register({ nombre, email, password });
+      await register({ fullName: nombre, email, password });
       navigate('/');
     } catch (err) {
       const status = err?.response?.status;
