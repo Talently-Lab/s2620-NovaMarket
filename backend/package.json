@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "NODE_ENV=production node app.js",
     "dev": "nodemon app.js",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:prod": "NODE_ENV=production prisma migrate deploy",
     "postinstall": "prisma skills sync || exit 0",
     "test": "jest"
   },

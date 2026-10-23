@@ -216,3 +216,32 @@ Los tests unitarios usan Jest y Supertest con el servicio mockeado, así que no 
 cd backend
 npm test
 ```
+
+## Migraciones
+
+Sin `NODE_ENV`, Prisma trabaja con la BD dev. Con `NODE_ENV=production`, con la principal. Los cambios de estructura se hacen siempre en `schema.prisma` y nunca a mano en Supabase. Entre las dos bases solo pasa la estructura, nunca los datos.
+
+`migrate:dev` toma los cambios de `schema.prisma`, crea un `migration.sql` y lo aplica en dev. `migrate:prod` aplica en la principal los `migration.sql` de `main` que todavía faltan.
+
+### Desarrollo
+
+```bash
+git checkout -b <rama>
+# editar prisma/schema.prisma
+npm run migrate:dev -- --name <descripcion>
+git add prisma/ src/
+git commit -m "feat(db): <descripcion>"
+git push -u origin <rama>
+```
+
+Antes del commit conviene revisar el `migration.sql`. Si un rename aparece como `DROP` + `ADD`, se crea con `--create-only`, se corrige el SQL a `RENAME COLUMN` y se aplica con `npm run migrate:dev`.
+
+### Producción (después del merge)
+
+```bash
+git checkout main && git pull
+NODE_ENV=production npx prisma migrate status
+npm run migrate:prod
+```
+
+Las migraciones que ya están en `main` no se editan. Si hay que corregir algo, se crea una nueva.
