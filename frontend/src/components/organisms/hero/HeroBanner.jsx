@@ -7,6 +7,7 @@ import {
   Zap,
   ChevronDown,
 } from "lucide-react";
+import { usePrefersReducedMotion } from "../../../hooks/usePrefersReducedMotion";
 import { Tag } from "../../atoms/Tag";
 import { Button } from "../../atoms/Button";
 import { useProducts } from "../../../hooks/useProducts";
@@ -19,20 +20,21 @@ export const HeroBanner = () => {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const products = useMemo(() => {
     return (rawProducts || []).filter((p) => p.imageUrl && p.price).slice(0, 5);
   }, [rawProducts]);
 
   useEffect(() => {
-    if (products.length <= 1 || isPaused) return;
+    if (products.length <= 1 || isPaused || prefersReducedMotion) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % products.length);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [products.length, isPaused]);
+  }, [products.length, isPaused, prefersReducedMotion]);
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev - 1 + products.length) % products.length);
@@ -139,7 +141,7 @@ export const HeroBanner = () => {
           <span className="text-[11px] font-inter font-medium tracking-widest uppercase opacity-75 group-hover:opacity-100">
             Descubrí más
           </span>
-          <ChevronDown size={18} className="animate-bounce" />
+          <ChevronDown size={18} className="animate-bounce motion-reduce:animate-none" />
         </button>
       </div>
     </section>

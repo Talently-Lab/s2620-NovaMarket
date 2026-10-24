@@ -8,15 +8,27 @@
   --color-neutral-light: #F5F7FA;
   --color-neutral-white: #FFFFFF;
 
-  /* Estados de error (ver Figma, página Desktop · fila «S4 · Estados») */
-  --color-error: #D92D20;        /* borde y mensaje de ayuda sobre blanco (4,8:1) */
-  --color-error-dark: #B42318;   /* texto sobre fondo rosa del aviso (5,7:1) */
-  --color-error-light: #FDECEA;  /* fondo de campo con error y del aviso */
+  /* Estados de error */
+  --color-error: #D92D20;        
+  --color-error-dark: #B42318;   
+  --color-error-light: #FDECEA;  
 
   --font-spartan: "League Spartan", sans-serif;
   --font-inter: "Inter", sans-serif;
-}
 
+  --animate-fade-in: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
 
 @layer base {
   body {
@@ -31,36 +43,48 @@
     font-family: var(--font-spartan);
   }
 
+  /* Animación HeroBanner */
   @keyframes rgbWave {
-  0%, 100% {
-    background-color: rgba(255, 255, 255, 0.03);
-    border-color: rgba(255, 255, 255, 0.08);
-    box-shadow: none;
-    transform: translateY(0);
+    0%, 100% {
+      background-color: rgba(255, 255, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.08);
+      box-shadow: none;
+      transform: translateY(0);
+    }
+    20% {
+      background-color: rgba(59, 130, 246, 0.28);
+      border-color: rgba(59, 130, 246, 0.7);
+      box-shadow: 0 0 16px rgba(59, 130, 246, 0.45);
+      transform: translateY(-2px);
+    }
+    40% {
+      background-color: rgba(250, 204, 21, 0.26);
+      border-color: rgba(250, 204, 21, 0.7);
+      box-shadow: 0 0 18px rgba(250, 204, 21, 0.4);
+      transform: translateY(-1px);
+    }
+    65% {
+      background-color: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+      transform: translateY(0);
+    }
   }
-  20% {
-    background-color: rgba(59, 130, 246, 0.28);
-    border-color: rgba(59, 130, 246, 0.7);
-    box-shadow: 0 0 16px rgba(59, 130, 246, 0.45);
-    transform: translateY(-2px);
-  }
-  40% {
-    background-color: rgba(250, 204, 21, 0.26);
-    border-color: rgba(250, 204, 21, 0.7);
-    box-shadow: 0 0 18px rgba(250, 204, 21, 0.4);
-    transform: translateY(-1px);
-  }
-  65% {
-    background-color: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.25);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
-    transform: translateY(0);
+
+  .animate-rgb-wave {
+    animation-name: rgbWave;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
   }
 }
 
-.animate-rgb-wave {
-  animation-name: rgbWave;
-  animation-iteration-count: infinite;
-  animation-timing-function: ease-in-out;
-}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
