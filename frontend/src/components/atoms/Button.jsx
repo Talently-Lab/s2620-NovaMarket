@@ -4,6 +4,7 @@ export const Button = ({
   fullWidth = false,
   className = '',
   type = 'button',
+  loading,
   ...props
 }) => {
   const baseStyles =
@@ -12,17 +13,17 @@ export const Button = ({
   const variants = {
     primary: 'bg-neutral-white text-primary hover:bg-gray-200',
     secondary: 'bg-secondary text-neutral-white hover:bg-secondary/90',
-    outline: 'border border-white/20 bg-white/5 hover:bg-white/10 text-neutral-white backdrop-blur-sm',
+    outline: 'border-2 border-secondary text-secondary hover:bg-neutral-light',
     ghost: 'text-neutral-white/90 hover:text-neutral-white hover:bg-white/5',
   };
 
-  // Si fullWidth es true, toma w-full; si no, mantiene w-fit por defecto
   const widthStyle = fullWidth ? 'w-full' : 'w-fit';
 
   return (
     <button
       type={type}
       className={`${baseStyles} ${variants[variant] || variants.primary} ${widthStyle} ${className}`}
+      disabled={loading || props.disabled}
       {...props}
     >
       {children}

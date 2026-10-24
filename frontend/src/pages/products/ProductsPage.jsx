@@ -37,9 +37,9 @@ export const ProductsPage = () => {
             <button
               key={cat}
               onClick={() => handleCategoryChange(cat)}
-              className={`min-h-11 px-4 py-2 whitespace-nowrap rounded-lg font-inter text-sm font-semibold transition-colors ${
+              className={`cursor-pointer min-h-11 px-4 py-2 whitespace-nowrap rounded-lg font-inter text-sm font-semibold transition-colors ${
                 selectedCategory === cat
-                  ? "bg-primary text-neutral-white"
+                  ? "bg-secondary text-neutral-white"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >
