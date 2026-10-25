@@ -12,11 +12,12 @@ export const NavBar = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const { user, logout } = useContext(AuthContext);
-  const { totalItems, clearCart } = useCart();
+  const { totalItems } = useCart();
+
+  const cartAriaLabel = `Carrito, ${totalItems} ${totalItems === 1 ? "producto" : "productos"}`;
 
   const handleLogout = () => {
     logout();
-    clearCart();
   };
 
   return (
@@ -34,9 +35,15 @@ export const NavBar = () => {
         <button
           className="md:hidden text-primary p-2 focus:outline-none z-50 min-h-11 min-w-11 flex items-center justify-center cursor-pointer"
           onClick={toggleMenu}
-          aria-label="Abrir menú"
+          aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
+          aria-expanded={isMenuOpen}
+          aria-controls="mobile-menu"
         >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          {isMenuOpen ? (
+            <X size={24} aria-hidden="true" />
+          ) : (
+            <Menu size={24} aria-hidden="true" />
+          )}
         </button>
 
         {/* NAVEGACIÓN DE ESCRITORIO */}
@@ -70,7 +77,7 @@ export const NavBar = () => {
                   className="flex items-center hover:text-secondary transition-colors min-h-11"
                 >
                   <div className="flex flex-col">
-                    <span className="text-[10px] text-gray-500 uppercase tracking-wider font-bold leading-none">
+                    <span className="text-xs text-gray-500 uppercase tracking-wider font-bold leading-none">
                       Hola,
                     </span>
                     <span className="font-bold leading-tight truncate max-w-55">
@@ -83,7 +90,7 @@ export const NavBar = () => {
                   title="Cerrar sesión"
                   className="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-xl transition-colors min-h-11 min-w-11 flex items-center justify-center cursor-pointer"
                 >
-                  <LogOut size={18} />
+                  <LogOut size={18} aria-hidden="true" />
                 </button>
               </div>
             ) : (
@@ -98,11 +105,12 @@ export const NavBar = () => {
 
             <Link
               to="/carrito"
+              aria-label={cartAriaLabel}
               className="relative flex items-center justify-center min-h-11 min-w-11 hover:bg-gray-50 rounded-xl transition-colors text-primary hover:text-secondary cursor-pointer"
             >
-              <ShoppingCart size={22} />
+              <ShoppingCart size={22} aria-hidden="true" />
               {totalItems > 0 && (
-                <div className="absolute -top-1 -right-1">
+                <div className="absolute -top-1 -right-1" aria-hidden="true">
                   <Badge count={totalItems} />
                 </div>
               )}
@@ -181,13 +189,18 @@ export const NavBar = () => {
           <Link
             to="/carrito"
             onClick={toggleMenu}
+            aria-label={cartAriaLabel}
             className="flex items-center justify-between text-base font-semibold text-primary bg-primary/5 hover:bg-primary/10 rounded-xl px-4 py-3 min-h-11 mt-4 transition-colors"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3" aria-hidden="true">
               <ShoppingCart size={22} className="text-secondary" />
               <span>Mi Carrito</span>
             </div>
-            {totalItems > 0 && <Badge count={totalItems} />}
+            {totalItems > 0 && (
+              <div aria-hidden="true">
+                <Badge count={totalItems} />
+              </div>
+            )}
           </Link>
         </div>
       )}

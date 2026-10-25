@@ -18,19 +18,21 @@ export const useProducts = (initialCategory = "Todos") => {
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const data = await productService.getProducts(); 
+        const data = await productService.getProducts();
         const list = data?.data || data || [];
         setAllProducts(list);
         setProducts(list);
       } catch (err) {
-        setError("No pudimos cargar los productos. Intentá de nuevo más tarde.");
+        setError(
+          "No pudimos cargar los productos. Intentá de nuevo más tarde.",
+        );
         console.error(err);
       } finally {
         setLoading(false);
@@ -43,7 +45,7 @@ export const useProducts = (initialCategory = "Todos") => {
   useEffect(() => {
     if (allProducts.length === 0) return;
 
-    if (!initialCategory || initialCategory === "Todos") {
+    if (!initialCategory || initialCategory.toLowerCase() === "todos") {
       setProducts(allProducts);
       setSelectedCategory("Todos");
     } else {
@@ -52,7 +54,13 @@ export const useProducts = (initialCategory = "Todos") => {
         return cat?.toLowerCase() === initialCategory.toLowerCase();
       });
       setProducts(filtered);
-      setSelectedCategory(initialCategory);
+
+      const categoriaCorrecta =
+        CATEGORIES.find(
+          (c) => c.toLowerCase() === initialCategory.toLowerCase(),
+        ) || initialCategory;
+
+      setSelectedCategory(categoriaCorrecta);
     }
   }, [initialCategory, allProducts]);
 
@@ -73,5 +81,4 @@ export const useProducts = (initialCategory = "Todos") => {
     error,
     handleCategoryChange,
   };
-
 };
