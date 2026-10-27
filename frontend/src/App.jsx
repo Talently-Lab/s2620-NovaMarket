@@ -9,7 +9,7 @@ import { Layout } from "./components/organisms/Layout";
 import { PrivateRoute } from "./routes/PrivateRoute";
 
 // PÁGINAS
-import { Home, ProductsPage, ProductDetailPage, CartPage, CheckoutPage, LoginPage, RegisterPage, AdminPage, Ayuda } from "./pages";
+import { Home, ProductsPage, ProductDetailPage, CartPage, CheckoutPage, LoginPage, RegisterPage, AdminPage, Ayuda, AboutUsPage } from "./pages";
 
 export const App = () => {
   return (
@@ -27,6 +27,7 @@ export const App = () => {
               <Route path="/" element={<Home />} />
               <Route path="/categorias" element={<ProductsPage />} />
               <Route path="/categorias/:category" element={<ProductsPage />} />
+              <Route path="/nosotros" element={<AboutUsPage />} />
               <Route path="/producto/:id" element={<ProductDetailPage />} />
               <Route path="/carrito" element={<CartPage />} />
               <Route path="/ayuda" element={<Ayuda />} />

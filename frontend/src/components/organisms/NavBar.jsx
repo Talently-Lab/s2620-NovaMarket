@@ -55,11 +55,12 @@ export const NavBar = () => {
             >
               Categorías
             </Link>
+            
             <Link
-              to="/ofertas"
+              to="/nosotros"
               className="hover:text-secondary transition-colors min-h-11 flex items-center"
             >
-              Ofertas
+              Nosotros
             </Link>
             <Link
               to="/ayuda"
@@ -88,6 +89,7 @@ export const NavBar = () => {
                 <button
                   onClick={handleLogout}
                   title="Cerrar sesión"
+                  aria-label="Cerrar sesión"
                   className="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-xl transition-colors min-h-11 min-w-11 flex items-center justify-center cursor-pointer"
                 >
                   <LogOut size={18} aria-hidden="true" />
@@ -121,7 +123,10 @@ export const NavBar = () => {
 
       {/* MENÚ DESPLEGABLE MÓVIL */}
       {isMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-neutral-white border-b border-gray-200 flex flex-col px-4 pt-2 pb-6 gap-2 shadow-xl animate-fade-in">
+        <div 
+          id="mobile-menu"
+          className="md:hidden absolute top-full left-0 w-full bg-neutral-white border-b border-gray-200 flex flex-col px-4 pt-2 pb-6 gap-2 shadow-xl animate-fade-in"
+        >
           <div className="w-full mb-4">
             <SearchBar />
           </div>
@@ -134,12 +139,13 @@ export const NavBar = () => {
             >
               Categorías
             </Link>
+            
             <Link
-              to="/ofertas"
+              to="/nosotros"
               onClick={toggleMenu}
               className="text-base font-semibold text-primary hover:bg-gray-50 rounded-xl px-3 py-3 min-h-11 flex items-center"
             >
-              Ofertas
+              Nosotros
             </Link>
             <Link
               to="/ayuda"
