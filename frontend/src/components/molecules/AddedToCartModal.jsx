@@ -1,126 +1,68 @@
-import { useEffect, useRef, useId } from "react";
-import {createPortal } from 'react-dom';
-import { CheckCircle2, X, ArrowRight, ShoppingCart } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { CheckCircle2, ShoppingCart } from "lucide-react";
+import { Modal } from "./Modal";
+import { Button } from "../atoms/Button";
 
 export const AddedToCartModal = ({ isOpen, onClose, product, quantity = 1 }) => {
-  const navigate = useNavigate();
-  
-  const titleId = useId();
-  const closeButtonRef = useRef(null);
-  const triggerElementRef = useRef(null);
+  if (!product) return null;
 
-  useEffect(() => {
-    if (isOpen) {
-      triggerElementRef.current = document.activeElement;
-
-      setTimeout(() => {
-        closeButtonRef.current?.focus();
-      }, 10);
-
-      const handleKeyDown = (e) => {
-        if (e.key === "Escape") onClose();
-      };
-      window.addEventListener("keydown", handleKeyDown);
-
-      return () => {
-        window.removeEventListener("keydown", handleKeyDown);
-        if (triggerElementRef.current && typeof triggerElementRef.current.focus === "function") {
-          triggerElementRef.current.focus();
-        }
-      };
-    }
-  }, [isOpen, onClose]);
-
-  if (!isOpen || !product) return null;
-
-  const price = Number(product.price) || 0;
-  const subtotal = price * quantity;
-
-  const handleGoToCart = () => {
-    onClose();
-    navigate("/carrito");
-  };
-
-  const handleGoToCheckout = () => {
-    onClose();
-    navigate("/checkout");
-  };
-
-  return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div
-        onClick={onClose}
-        className="fixed inset-0 bg-primary/50 backdrop-blur-xs transition-opacity"
-      />
-
-      <div 
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        className="relative bg-neutral-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-lg p-6 flex flex-col gap-5 z-10 animate-fade-in"
-      >
-        {/* Encabezado con estado de éxito y botón cerrar */}
-        <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-          <div className="flex items-center gap-2 text-emerald-600">
-            <CheckCircle2 size={22} className="shrink-0" aria-hidden="true" />
-            <span id={titleId} className="font-spartan font-bold text-base text-primary">
-              ¡Agregado al carrito!
-            </span>
-          </div>
-          
-          <button
-            ref={closeButtonRef}
-            onClick={onClose}
-            className="p-1 text-gray-600 hover:text-primary rounded-lg transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20"
-            aria-label="Cerrar modal"
-          >
-            <X size={20} aria-hidden="true" />
-          </button>
-        </div>
-
-        {/* Fila del Producto */}
-        <div className="flex items-center gap-4 bg-gray-50 border border-gray-100 rounded-xl p-3">
-          <div className="w-16 h-16 shrink-0 bg-neutral-white rounded-lg border border-gray-200 p-1 flex items-center justify-center overflow-hidden">
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="¡Agregado al carrito!"
+      maxWidth="max-w-md"
+    >
+      <div className="p-6 flex flex-col gap-6">
+        {/* Info del producto agregado */}
+        <div className="flex items-center gap-4 bg-gray-50 border border-gray-100 p-4 rounded-xl">
+          <div className="w-16 h-16 rounded-lg overflow-hidden bg-white border border-gray-200 shrink-0 flex items-center justify-center">
             <img
-              src={product.imageUrl || "https://placehold.co/100x100?text=Producto"}
+              src={product.imageUrl}
               alt={product.name}
-              className="w-full h-full object-contain"
+              className="w-full h-full object-cover"
             />
           </div>
+
           <div className="flex-1 min-w-0">
-            <h4 className="font-inter font-semibold text-sm text-primary truncate">
+            <div className="flex items-center gap-1.5 text-secondary text-xs font-semibold mb-0.5">
+              <CheckCircle2 size={15} />
+              <span>Listo para comprar</span>
+            </div>
+            <h4 className="font-spartan font-bold text-sm text-primary truncate">
               {product.name}
             </h4>
-            <p className="font-inter text-xs text-gray-500 mt-0.5">
-              Cantidad: <span className="font-bold text-primary">{quantity}</span>
-            </p>
-            <span className="font-inter font-bold text-sm text-secondary mt-1 block">
-              ${subtotal.toLocaleString("es-AR")}
-            </span>
+            <div className="flex items-center justify-between text-xs text-gray-500 mt-1">
+              <span>Cantidad: <strong className="text-primary">{quantity}</strong></span>
+              <span className="font-bold text-sm text-primary">
+                {product.formattedPrice || `$${product.price} USD`}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Botones de Acción */}
-        <div className="flex flex-col sm:flex-row gap-3 pt-2">
+        {/* Botones de acción accesibles */}
+        <div className="flex flex-col sm:flex-row gap-3">
           <button
-            onClick={handleGoToCart}
-            className="flex-1 border border-gray-300 hover:border-primary text-primary font-inter font-bold text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer min-h-11"
+            type="button"
+            onClick={onClose}
+            className="flex-1 py-3 px-4 rounded-xl border border-gray-300 font-inter text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors min-h-11 flex items-center justify-center cursor-pointer"
           >
-            <ShoppingCart size={18} aria-hidden="true" />
-            <span>Ver Carrito</span>
+            Seguir comprando
           </button>
 
-          <button
-            onClick={handleGoToCheckout}
-            className="flex-1 bg-primary hover:bg-secondary text-neutral-white font-inter font-bold text-sm py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-sm min-h-11"
-          >
-            <span>Comprar ahora</span>
-            <ArrowRight size={18} aria-hidden="true" />
-          </button>
+          <Link to="/carrito" className="flex-1" onClick={onClose}>
+            <Button
+              variant="secondary"
+              fullWidth
+              className="min-h-11 flex items-center justify-center gap-2"
+            >
+              <ShoppingCart size={18} />
+              <span>Ir al carrito</span>
+            </Button>
+          </Link>
         </div>
       </div>
-    </div>,
-    document.body
+    </Modal>
   );
 };
