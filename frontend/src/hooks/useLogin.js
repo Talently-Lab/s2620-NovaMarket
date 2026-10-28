@@ -1,49 +1,95 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-
-// Mensajes de error según lo que pasó (ver notas en el Figma, fila «S4 · Estados»)
-const MENSAJES = {
-  credenciales: "No pudimos iniciar sesión. Revisá tu email y tu contraseña e intentá de nuevo.",
-  inactivo: "Tu cuenta está inactiva. Escribinos para reactivarla.",
-  conexion: "No pudimos conectarnos. Intentá de nuevo en unos minutos.",
-  servidor: "Algo salió mal de nuestro lado. Intentá de nuevo en unos minutos.",
-};
+import { LOGIN_MENSAJES } from "../const/authMessages";
 
 export const useLogin = () => {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const [credentials, setCredentials] = useState({ email: "", password: "" });
-  // error = { message, camposInvalidos } | null
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value });
-    if (error) setError(null);
+    const { name, value } = e.target;
+    setCredentials((prev) => ({ ...prev, [name]: value }));
+
+    if (error) {
+      setError((prev) => {
+        if (!prev) return null;
+        const updatedFields = { ...prev.fields, [name]: false };
+        if (!updatedFields.email && !updatedFields.password) return null;
+        return { ...prev, fields: updatedFields };
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const formElement = e.currentTarget;
+    const currentEmail = (formElement.email?.value ?? credentials.email).trim();
+    const currentPassword = (formElement.password?.value ?? credentials.password).trim();
+
+    setCredentials({ email: currentEmail, password: currentPassword });
+
+    if (!currentEmail && !currentPassword) {
+      setError({
+        message: LOGIN_MENSAJES.incompletos,
+        fields: { email: true, password: true },
+      });
+      return;
+    }
+
+    if (!currentEmail) {
+      setError({
+        message: LOGIN_MENSAJES.emailVacio,
+        fields: { email: true, password: false },
+      });
+      return;
+    }
+
+    if (!currentPassword) {
+      setError({
+        message: LOGIN_MENSAJES.passwordVacio,
+        fields: { email: false, password: true },
+      });
+      return;
+    }
+
     setError(null);
     setSubmitting(true);
 
     try {
-      await login(credentials);
+      await login({
+        email: currentEmail,
+        password: currentPassword,
+      });
       navigate("/");
     } catch (err) {
       const status = err?.response?.status;
 
       if (!err?.response) {
-        setError({ message: MENSAJES.conexion, camposInvalidos: false });
+        setError({
+          message: LOGIN_MENSAJES.conexion,
+          fields: { email: false, password: false },
+        });
       } else if (status === 400 || status === 401) {
-        // El servidor responde igual para email o contraseña incorrectos: no se marca cuál es.
-        setError({ message: MENSAJES.credenciales, camposInvalidos: true });
+        setError({
+          message: LOGIN_MENSAJES.credenciales,
+          fields: { email: true, password: true },
+        });
       } else if (status === 403) {
-        setError({ message: MENSAJES.inactivo, camposInvalidos: false });
+        setError({
+          message: LOGIN_MENSAJES.inactivo,
+          fields: { email: false, password: false },
+        });
       } else {
-        setError({ message: MENSAJES.servidor, camposInvalidos: false });
+        setError({
+          message: LOGIN_MENSAJES.servidor,
+          fields: { email: false, password: false },
+        });
       }
     } finally {
       setSubmitting(false);
