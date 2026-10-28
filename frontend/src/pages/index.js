@@ -8,3 +8,4 @@ export * from "./products/ProductsPage";
 export * from "./products/ProductDetailPage";
 export * from "./static/Ayuda";
 export * from "./about/AboutUsPage";
+export * from "./account/AccountPage";
