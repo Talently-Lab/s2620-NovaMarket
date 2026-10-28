@@ -90,7 +90,7 @@ export const NavBar = () => {
                   onClick={handleLogout}
                   title="Cerrar sesión"
                   aria-label="Cerrar sesión"
-                  className="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-xl transition-colors min-h-11 min-w-11 flex items-center justify-center cursor-pointer"
+                  className="text-gray-600 hover:text-red-600 hover:bg-red-50 p-2 rounded-xl transition-colors min-h-11 min-w-11 flex items-center justify-center cursor-pointer"
                 >
                   <LogOut size={18} aria-hidden="true" />
                 </button>

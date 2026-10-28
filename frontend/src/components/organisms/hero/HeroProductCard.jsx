@@ -19,7 +19,7 @@ export const HeroProductCard = ({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <div className="relative w-full max-w-md bg-white/5 backdrop-blur-2xl border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col justify-between min-h-[460px]">
+      <div className="relative w-full max-w-md bg-white/5 backdrop-blur-2xl border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col justify-between min-h-115">
         {product ? (
           <div className="flex flex-col justify-between h-full gap-5">
             {/* Header del producto */}
