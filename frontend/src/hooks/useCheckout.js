@@ -15,6 +15,7 @@ export const useCheckout = () => {
     city: '',
     notes: '',
   });
+  const [fieldErrors, setFieldErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [orderSuccess, setOrderSuccess] = useState(null);
@@ -37,25 +38,66 @@ export const useCheckout = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (fieldErrors[name]) {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
+    }
+
+    if (error) setError(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
 
-    if (!formData.fullName.trim() || !formData.address.trim()) {
-      setError('Por favor completá tu nombre y dirección de envío.');
+    const formElement = e.currentTarget;
+    const currentFullName = (formElement.fullName?.value ?? formData.fullName).trim();
+    const currentAddress = (formElement.address?.value ?? formData.address).trim();
+    const currentCity = (formElement.city?.value ?? formData.city).trim();
+    const currentNotes = (formElement.notes?.value ?? formData.notes).trim();
+
+    setFormData({
+      fullName: currentFullName,
+      address: currentAddress,
+      city: currentCity,
+      notes: currentNotes,
+    });
+
+    const errors = {};
+    if (!currentFullName) {
+      errors.fullName = 'Ingresá el nombre completo de quien recibe.';
+    }
+    if (!currentAddress) {
+      errors.address = 'Ingresá la dirección de entrega.';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+
+      if (!currentFullName && !currentAddress) {
+        setError('Por favor completá tu nombre y dirección de envío.');
+      } else if (!currentFullName) {
+        setError('Debés ingresar el nombre completo de quien recibe.');
+      } else {
+        setError('Debés ingresar la dirección de entrega.');
+      }
       return;
     }
+
+    setFieldErrors({});
 
     try {
       setSubmitting(true);
       const payload = {
-        customerName: formData.fullName.trim(),
-        shippingAddress: formData.city
-          ? `${formData.address.trim()}, ${formData.city.trim()}`
-          : formData.address.trim(),
-        notes: formData.notes.trim(),
+        customerName: currentFullName,
+        shippingAddress: currentCity
+          ? `${currentAddress}, ${currentCity}`
+          : currentAddress,
+        notes: currentNotes,
         total: Number(totalAmount.toFixed(2)),
         items: items.map((item) => ({
           productId: item.id,
@@ -66,18 +108,24 @@ export const useCheckout = () => {
       };
 
       const createdOrder = await orderService.createOrder(payload);
-      const orderId = createdOrder?.id || createdOrder?.orderNumber || `NM-${Math.floor(100000 + Math.random() * 900000)}`;
+      const orderId =
+        createdOrder?.id ||
+        createdOrder?.orderNumber ||
+        `NM-${Math.floor(100000 + Math.random() * 900000)}`;
 
       setOrderSuccess({
         id: orderId,
-        customerName: formData.fullName,
+        customerName: currentFullName,
         shippingAddress: payload.shippingAddress,
         totalPaid: totalAmount,
       });
       clearCart();
     } catch (err) {
       const backendMsg = err.response?.data?.message;
-      setError(backendMsg || 'No pudimos procesar tu orden en este momento. Verificá los datos e intentá nuevamente.');
+      setError(
+        backendMsg ||
+          'No pudimos procesar tu orden en este momento. Verificá los datos e intentá nuevamente.'
+      );
     } finally {
       setSubmitting(false);
     }
@@ -85,6 +133,7 @@ export const useCheckout = () => {
 
   return {
     formData,
+    fieldErrors,
     submitting,
     error,
     orderSuccess,
@@ -92,6 +141,6 @@ export const useCheckout = () => {
     handleSubmit,
     items,
     totalItems,
-    totalAmount
+    totalAmount,
   };
 };
