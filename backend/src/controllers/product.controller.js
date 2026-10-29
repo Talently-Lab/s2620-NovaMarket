@@ -1,10 +1,24 @@
 const productService = require('../services/product.service');
+const categoryService = require('../services/category.service');
 const { successResponse, errorResponse } = require('../utils/response');
 const { validateCreateProduct, validateUpdateProduct } = require('../validators/product.validator');
 
 const getAll = async (req, res) => {
   try {
-    const products = await productService.getAllProducts(req.query.category);
+    const products = await productService.getAllProducts();
+    successResponse(res, 200, 'Productos obtenidos con éxito', products);
+  } catch (error) {
+    errorResponse(res, 500, 'Error al obtener productos', error.message);
+  }
+};
+
+const getByCategory = async (req, res) => {
+  try {
+    const category = await categoryService.getCategoryByName(req.params.categoryName.trim());
+    if (!category) {
+      return errorResponse(res, 404, 'Categoría no encontrada');
+    }
+    const products = await productService.getProductsByCategoryId(category.id);
     successResponse(res, 200, 'Productos obtenidos con éxito', products);
   } catch (error) {
     errorResponse(res, 500, 'Error al obtener productos', error.message);
@@ -76,4 +90,4 @@ const remove = async (req, res) => {
   }
 };
 
-module.exports = { getAll, getById, create, update, remove };
+module.exports = { getAll, getByCategory, getById, create, update, remove };

@@ -171,9 +171,104 @@ Estructura de un producto:
 }
 ```
 
-`GET /api/products`
+#### Listar Productos
 
-Lista todos los productos. Acepta el query param opcional `category` para filtrar por categoría sin distinguir mayúsculas, por ejemplo `?category=periféricos`. Responde `200` con un array de productos en `data`.
+Ruta: `GET /api/products`
+
+Headers: ninguno
+
+Request: sin body
+
+Response 200:
+
+```json
+{
+  "success": true,
+  "message": "Productos obtenidos con éxito",
+  "data": [
+    {
+      "id": "uuid",
+      "name": "Teclado mecánico",
+      "description": "Switches red, layout ES",
+      "price": "49.90",
+      "stock": 10,
+      "imageUrl": "https://...",
+      "categoryId": 1,
+      "brand": "Logitech",
+      "notActive": false,
+      "createdAt": "2026-10-08T00:00:00.000Z",
+      "updatedAt": "2026-10-08T00:00:00.000Z",
+      "category": { "id": 1, "name": "Periféricos", "createdAt": "2026-10-08T00:00:00.000Z" }
+    }
+  ]
+}
+```
+
+Response (Error):
+
+- `500` Error interno
+
+```json
+{
+  "success": false,
+  "message": "Error al obtener productos",
+  "error": "<detalle del error>"
+}
+```
+
+#### Listar Productos por Categoría
+
+Ruta: `GET /api/products/category/:categoryName`
+
+Headers: ninguno
+
+Request: sin body. `categoryName` es el nombre de la categoría. La búsqueda no distingue mayúsculas, pero el nombre tiene que coincidir completo, por ejemplo `/api/products/category/periféricos`.
+
+Response 200 (si la categoría no tiene productos activos, `data` es `[]`):
+
+```json
+{
+  "success": true,
+  "message": "Productos obtenidos con éxito",
+  "data": [
+    {
+      "id": "uuid",
+      "name": "Teclado mecánico",
+      "description": "Switches red, layout ES",
+      "price": "49.90",
+      "stock": 10,
+      "imageUrl": "https://...",
+      "categoryId": 1,
+      "brand": "Logitech",
+      "notActive": false,
+      "createdAt": "2026-10-08T00:00:00.000Z",
+      "updatedAt": "2026-10-08T00:00:00.000Z",
+      "category": { "id": 1, "name": "Periféricos", "createdAt": "2026-10-08T00:00:00.000Z" }
+    }
+  ]
+}
+```
+
+Response (Error):
+
+- `404` La categoría no existe
+
+```json
+{
+  "success": false,
+  "message": "Categoría no encontrada"
+}
+```
+
+- `500` Error interno
+
+```json
+{
+  "success": false,
+  "message": "Error al obtener productos",
+  "error": "<detalle del error>"
+}
+```
 
 `GET /api/products/:id`
 
