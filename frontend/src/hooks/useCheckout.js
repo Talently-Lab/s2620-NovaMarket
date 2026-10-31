@@ -92,18 +92,17 @@ export const useCheckout = () => {
 
     try {
       setSubmitting(true);
+      
       const payload = {
         customerName: currentFullName,
-        shippingAddress: currentCity
-          ? `${currentAddress}, ${currentCity}`
-          : currentAddress,
+        shippingAddress: {
+          address: currentAddress,
+          city: currentCity || "",
+        },
         notes: currentNotes,
-        total: Number(totalAmount.toFixed(2)),
         items: items.map((item) => ({
-          productId: item.id,
-          name: item.name,
-          price: Number(item.price),
-          quantity: Number(item.quantity),
+          productId: String(item.id),
+          quantity: parseInt(item.quantity, 10),
         })),
       };
 
@@ -116,16 +115,24 @@ export const useCheckout = () => {
       setOrderSuccess({
         id: orderId,
         customerName: currentFullName,
-        shippingAddress: payload.shippingAddress,
+        shippingAddress: currentCity 
+          ? `${currentAddress}, ${currentCity}` 
+          : currentAddress,
         totalPaid: totalAmount,
       });
       clearCart();
     } catch (err) {
+      const status = err.response?.status;
       const backendMsg = err.response?.data?.message;
-      setError(
-        backendMsg ||
-          'No pudimos procesar tu orden en este momento. Verificá los datos e intentá nuevamente.'
-      );
+      
+      if (status === 409) {
+        setError('Lo sentimos, uno o más productos de tu carrito se quedaron sin stock justo ahora. Revisá tu carrito.');
+      } else {
+        setError(
+          backendMsg ||
+            'No pudimos procesar tu orden en este momento. Verificá los datos e intentá nuevamente.'
+        );
+      }
     } finally {
       setSubmitting(false);
     }
