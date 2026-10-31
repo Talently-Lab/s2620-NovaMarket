@@ -7,6 +7,7 @@ import { CartProvider } from "./context/CartContext";
 // COMPONENTES ESTRUCTURALES
 import { Layout } from "./components/organisms/Layout";
 import { PrivateRoute } from "./routes/PrivateRoute";
+import { AdminRoute } from "./routes/AdminRoute";
 
 // PÁGINAS
 import { Home, ProductsPage, ProductDetailPage, CartPage, CheckoutPage, LoginPage, RegisterPage, AdminPage, Ayuda, AboutUsPage, AccountPage } from "./pages";
@@ -23,6 +24,7 @@ export const App = () => {
 
             {/* RUTAS ESTRUCTURALES (Con Layout) */}
             <Route element={<Layout />}>
+
               {/* RUTAS PÚBLICAS DE NAVEGACIÓN */}
               <Route path="/" element={<Home />} />
               <Route path="/categorias" element={<ProductsPage />} />
@@ -36,6 +38,10 @@ export const App = () => {
               <Route element={<PrivateRoute />}>
                 <Route path="/cuenta" element={<AccountPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
+              </Route>
+
+              {/* RUTAS PROTEGIDAS ADMIN */}
+              <Route element={<AdminRoute />}>
                 <Route path="/admin" element={<AdminPage />} />
               </Route>
             </Route>
@@ -44,5 +50,4 @@ export const App = () => {
       </CartProvider>
     </AuthProvider>
   );
-
 };
