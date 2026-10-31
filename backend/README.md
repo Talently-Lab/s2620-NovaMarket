@@ -313,30 +313,25 @@ npm test
 ```
 
 ## Migraciones
+### Crear una migración (dev)
 
-Sin `NODE_ENV`, Prisma trabaja con la BD dev. Con `NODE_ENV=production`, con la principal. Los cambios de estructura se hacen siempre en `schema.prisma` y nunca a mano en Supabase. Entre las dos bases solo pasa la estructura, nunca los datos.
+1. Crear rama: `git checkout -b <rama>`
+2. Editar `prisma/schema.prisma`.
+3. Generar y aplicar en dev: `npm run migrate:dev -- --name <descripcion>`
+4. Revisar el `migration.sql` generado.
+5. Subir los cambios:
+   ```bash
+   git add prisma/ src/
+   git commit -m "feat(db): <descripcion>"
+   git push -u origin <rama>
+   ```
 
-`migrate:dev` toma los cambios de `schema.prisma`, crea un `migration.sql` y lo aplica en dev. `migrate:prod` aplica en la principal los `migration.sql` de `main` que todavía faltan.
+### Aplicar en producción (manual, después del merge)
 
-### Desarrollo
+1. Actualizar main: `git checkout main && git pull`
+2. Ver migraciones pendientes: `NODE_ENV=production npx prisma migrate status`
+3. Aplicar: `npm run migrate:prod`
 
-```bash
-git checkout -b <rama>
-# editar prisma/schema.prisma
-npm run migrate:dev -- --name <descripcion>
-git add prisma/ src/
-git commit -m "feat(db): <descripcion>"
-git push -u origin <rama>
-```
+### Corregir una migración ya mergeada
 
-Antes del commit conviene revisar el `migration.sql`. Si un rename aparece como `DROP` + `ADD`, se crea con `--create-only`, se corrige el SQL a `RENAME COLUMN` y se aplica con `npm run migrate:dev`.
-
-### Producción (después del merge)
-
-```bash
-git checkout main && git pull
-NODE_ENV=production npx prisma migrate status
-npm run migrate:prod
-```
-
-Las migraciones que ya están en `main` no se editan. Si hay que corregir algo, se crea una nueva.
+No editar la existente: crear una nueva siguiendo "Crear una migración".
