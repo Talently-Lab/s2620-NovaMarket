@@ -5,6 +5,7 @@ const { authenticate, authorize } = require('../middlewares/auth.middleware');
 const router = Router();
 
 router.get('/', productController.getAll);
+router.get('/category/:categoryName', productController.getByCategory);
 router.get('/:id', productController.getById);
 router.post('/', authenticate, authorize('ADMIN'), productController.create);
 router.put('/:id', authenticate, authorize('ADMIN'), productController.update);
