@@ -7,6 +7,8 @@
     "dev": "nodemon app.js",
     "migrate:dev": "prisma migrate dev",
     "migrate:prod": "NODE_ENV=production prisma migrate deploy",
+    "migrate:status:dev": "prisma migrate status",
+    "migrate:status:prod": "NODE_ENV=production prisma migrate status",
     "postinstall": "prisma skills sync || exit 0",
     "test": "jest"
   },

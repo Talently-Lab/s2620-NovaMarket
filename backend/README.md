@@ -315,22 +315,18 @@ npm test
 ## Migraciones
 ### Crear una migración (dev)
 
-1. Crear rama: `git checkout -b <rama>`
-2. Editar `prisma/schema.prisma`.
-3. Generar y aplicar en dev: `npm run migrate:dev -- --name <descripcion>`
-4. Revisar el `migration.sql` generado.
-5. Subir los cambios:
-   ```bash
-   git add prisma/ src/
-   git commit -m "feat(db): <descripcion>"
-   git push -u origin <rama>
-   ```
+1. Editar `prisma/schema.prisma`.
+2. Generar y aplicar en dev: `npm run migrate:dev -- --name <descripcion>`
+3. Revisar el `migration.sql` generado.
+4. Verificar que dev quedó al día: `npm run migrate:status:dev`
+
+Para cambios solo de datos (sin tocar el schema), en lugar de los pasos 1 y 2: crear la migración vacía con `npm run migrate:dev -- --create-only --name <descripcion>`, escribir el SQL en su `migration.sql` y aplicarla con `npm run migrate:dev`.
 
 ### Aplicar en producción (manual, después del merge)
 
-1. Actualizar main: `git checkout main && git pull`
-2. Ver migraciones pendientes: `NODE_ENV=production npx prisma migrate status`
-3. Aplicar: `npm run migrate:prod`
+1. Ver migraciones pendientes: `npm run migrate:status:prod`
+2. Aplicar: `npm run migrate:prod`
+3. Confirmar que prod quedó al día: `npm run migrate:status:prod`
 
 ### Corregir una migración ya mergeada
 
