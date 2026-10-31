@@ -5,10 +5,13 @@ const include = { category: true };
 
 const formatProduct = (product) => ({ ...product, price: product.price.toFixed(2) });
 
-const getAllProducts = async (category) => {
-  const where = { notActive: false };
-  if (category) where.category = { name: { equals: category, mode: 'insensitive' } };
-  const products = await prisma.product.findMany({ where, include });
+const getAllProducts = async () => {
+  const products = await prisma.product.findMany({ where: { notActive: false }, include });
+  return products.map(formatProduct);
+};
+
+const getProductsByCategoryId = async (categoryId) => {
+  const products = await prisma.product.findMany({ where: { categoryId, notActive: false }, include });
   return products.map(formatProduct);
 };
 
@@ -30,4 +33,4 @@ const deleteProduct = async (id) => {
   return { id: deleted.id };
 };
 
-module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct };
+module.exports = { getAllProducts, getProductsByCategoryId, getProductById, createProduct, updateProduct, deleteProduct };

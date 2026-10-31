@@ -4,4 +4,8 @@ const getAllCategories = async () => {
   return prisma.category.findMany({ orderBy: { name: 'asc' } });
 };
 
-module.exports = { getAllCategories };
+const getCategoryByName = async (name) => {
+  return prisma.category.findFirst({ where: { name: { equals: name, mode: 'insensitive' } } });
+};
+
+module.exports = { getAllCategories, getCategoryByName };

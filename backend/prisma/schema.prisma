@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
 // --------------------------------------
@@ -103,11 +103,12 @@ model CartItem {
 // ÓRDENES DE COMPRA
 // --------------------------------------
 model Order {
-  id          String      @id @default(uuid())
-  userId      String      @map("user_id")
-  totalAmount Decimal     @map("total_amount") @db.Decimal(10, 2)
-  status      OrderStatus @default(PENDING)
-  createdAt   DateTime    @default(now()) @map("created_at")
+  id              String      @id @default(uuid())
+  userId          String      @map("user_id")
+  totalAmount     Decimal     @map("total_amount") @db.Decimal(10, 2)
+  status          OrderStatus @default(CONFIRMED)
+  shippingAddress Json        @map("shipping_address")
+  createdAt       DateTime    @default(now()) @map("created_at")
 
   user       User        @relation(fields: [userId], references: [id])
   orderItems OrderItem[]
@@ -116,9 +117,7 @@ model Order {
 }
 
 enum OrderStatus {
-  PENDING
-  PAID
-  SHIPPED
+  CONFIRMED
   CANCELLED
 }
 

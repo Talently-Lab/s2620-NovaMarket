@@ -1,6 +1,8 @@
 import "dotenv/config";
 import { defineConfig, env} from "prisma/config";
 
+const isProd = process.env.NODE_ENV === "production";
+
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
@@ -8,6 +10,6 @@ export default defineConfig({
     seed: "node prisma/seed.js",
   },
   datasource: {
-    url: env("DIRECT_URL"),
+    url: env(isProd ? "DIRECT_URL" : "DIRECT_URL_DEV"),
   },
 });
