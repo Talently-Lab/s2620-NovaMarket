@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { User, Mail, Shield, AlertCircle, RefreshCw } from 'lucide-react';
+import { User, Mail, Shield, RefreshCw } from 'lucide-react';
 import { AuthContext } from '../../context/AuthContext';
 import { useUserOrders } from '../../hooks/useUserOrders';
 import { OrderCard } from '../../components/molecules/OrderCard';
@@ -107,7 +107,7 @@ export const AccountPage = () => {
           ) : (
             <div className="flex flex-col gap-4">
               {orders.map((order) => (
-                <OrderCard key={order.id || order._id} order={order} />
+                <OrderCard key={order.id || order._id} order={order}  onOrderUpdated={refetch}/>
               ))}
             </div>
           )}
