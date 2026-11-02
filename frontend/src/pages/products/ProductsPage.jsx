@@ -1,24 +1,25 @@
-import { PackageSearch } from "lucide-react";
-import { useParams } from "react-router-dom";
-import { useProducts } from "../../hooks/useProducts";
+import { PackageSearch, X } from "lucide-react";
+import { useProductsCatalog } from "../../hooks/useProductsCatalog";
 import { ProductCard } from "../../components/molecules/ProductCard";
 import { ProductCardSkeleton } from "../../components/molecules/ProductCardSkeleton";
 import { Button } from "../../components/atoms/Button";
-
-const MARKETING_EMPTY_TEXT =
-  "¡Ups! Por el momento no encontramos productos en esta categoría, pero estamos preparando nuevos ingresos para potenciar tu setup. ¡Explorá el resto de nuestro catálogo!";
+import {
+  MARKETING_EMPTY_TEXT,
+  SEARCH_EMPTY_TEXT,
+} from "../../const/catalogMessages";
 
 export const ProductsPage = () => {
-  const { category: urlCategory } = useParams();
-
   const {
     products,
     categories,
     selectedCategory,
     loading,
     error,
+    searchQuery,
     handleCategoryChange,
-  } = useProducts(urlCategory || "Todos");
+    handleClearSearch,
+    handleResetCatalog,
+  } = useProductsCatalog();
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 md:px-6 py-8 flex flex-col gap-8 animate-fade-in">
@@ -30,6 +31,20 @@ export const ProductsPage = () => {
           <p className="font-inter text-sm text-gray-500 mt-1">
             Encontrá el equipamiento ideal para tu espacio de trabajo y gaming
           </p>
+
+          {searchQuery && (
+            <div className="inline-flex items-center gap-2 mt-3 bg-[#F0F4F8] text-secondary text-xs font-semibold px-3 py-1.5 rounded-full">
+              <span>Resultados para: "{searchQuery}"</span>
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                title="Quitar filtro de búsqueda"
+                className="hover:text-primary transition-colors cursor-pointer"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex gap-2 overflow-x-auto pb-2">
@@ -47,17 +62,14 @@ export const ProductsPage = () => {
             </button>
           ))}
         </div>
-
       </div>
 
-      {/* Estado de Error */}
       {error && (
         <div className="bg-red-50 text-red-500 p-4 rounded-xl text-center font-inter text-sm">
           {error}
         </div>
       )}
 
-      {/* Estado de Carga: Grilla de Skeletons */}
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.from({ length: 6 }).map((_, index) => (
@@ -65,26 +77,25 @@ export const ProductsPage = () => {
           ))}
         </div>
       ) : products.length === 0 ? (
-        /* Empty State */
         <div className="flex flex-col items-center justify-center text-center bg-neutral-white border border-gray-200 rounded-2xl p-12 my-4 max-w-xl mx-auto">
           <div className="w-16 h-16 rounded-full bg-[#F0F4F8] flex items-center justify-center text-secondary mb-4">
             <PackageSearch size={32} strokeWidth={1.5} />
           </div>
           <h3 className="font-spartan font-bold text-xl text-primary mb-2">
-            Sin productos disponibles
+            {searchQuery
+              ? "Sin resultados coincidentes"
+              : "Sin productos disponibles"}
           </h3>
           <p className="font-inter text-sm text-gray-500 mb-6 leading-relaxed">
-            {MARKETING_EMPTY_TEXT}
+            {searchQuery
+              ? SEARCH_EMPTY_TEXT(searchQuery)
+              : MARKETING_EMPTY_TEXT}
           </p>
-          <Button
-            variant="secondary"
-            onClick={() => handleCategoryChange("Todos")}
-          >
+          <Button variant="secondary" onClick={handleResetCatalog}>
             Ver todos los productos
           </Button>
         </div>
       ) : (
-        /* Grilla Responsiva de Productos */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
             <ProductCard key={product.id} {...product} />
