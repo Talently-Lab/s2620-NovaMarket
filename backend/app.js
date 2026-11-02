@@ -4,7 +4,16 @@ require('dotenv').config();
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = (process.env.CORS_ORIGIN || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    callback(null, !origin || allowedOrigins.includes(origin));
+  },
+}));
 app.use(express.json());
 
 const healthRoutes = require('./src/routes/health.routes');
@@ -18,6 +27,11 @@ app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/orders', orderRoutes);
+
+const { notFound, errorHandler } = require('./src/middlewares/error.middleware');
+
+app.use(notFound);
+app.use(errorHandler);
 
 if (require.main === module) {
   const PORT = process.env.PORT || 3000;
