@@ -1,27 +1,10 @@
-import axios from 'axios';
-
-const API_URL = 'http://localhost:3000/api/products';
-
-const axiosInstance = axios.create({
-  baseURL: API_URL
-});
-
-axiosInstance.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+import { api } from './api';
 
 export const productService = {
-
+  // GET /api/products
   getProducts: async (category = 'Todos') => {
-    const response = await axiosInstance.get('/');
-    const products = response.data.data || [];
+    const response = await api.get('/products');
+    const products = response.data?.data || response.data || [];
 
     if (!category || category === 'Todos') {
       return products;
@@ -35,20 +18,23 @@ export const productService = {
     );
   },
 
-
+  // GET /api/products/:id
   getProductById: async (id) => {
-    const response = await axiosInstance.get('/');
-    const products = response.data.data || [];
-    const product = products.find((p) => p.id === id);
-
-    if (!product) {
+    try {
+      const response = await api.get(`/products/${id}`);
+      return response.data?.data || response.data;
+    } catch (err) {
+      if (err.response?.status === 404) {
+        const response = await api.get('/products');
+        const products = response.data?.data || response.data || [];
+        const product = products.find((p) => p.id === id);
+        if (product) return product;
+      }
       throw new Error('Producto no encontrado');
     }
-
-    return product;
   },
 
-
+  // POST /api/products
   createProduct: async (productData) => {
     const payload = {
       name: productData.name.trim(),
@@ -56,14 +42,14 @@ export const productService = {
       price: Number(productData.price),
       stock: Number(productData.stock ?? 0),
       description: productData.description?.trim() || '',
-      imageUrl: productData.imageUrl?.trim() || ''
+      imageUrl: productData.imageUrl?.trim() || '',
     };
 
-    const response = await axiosInstance.post('/', payload);
-    return response.data.data;
+    const response = await api.post('/products', payload);
+    return response.data?.data || response.data;
   },
 
-
+  // PUT /api/products/:id
   updateProduct: async (id, productData) => {
     const payload = {
       name: productData.name.trim(),
@@ -71,16 +57,16 @@ export const productService = {
       price: Number(productData.price),
       stock: Number(productData.stock ?? 0),
       description: productData.description?.trim() || '',
-      imageUrl: productData.imageUrl?.trim() || ''
+      imageUrl: productData.imageUrl?.trim() || '',
     };
 
-    const response = await axiosInstance.put(`/${id}`, payload);
-    return response.data.data;
+    const response = await api.put(`/products/${id}`, payload);
+    return response.data?.data || response.data;
   },
 
-
+  // DELETE /api/products/:id
   deleteProduct: async (id) => {
-    const response = await axiosInstance.delete(`/${id}`);
-    return response.data.data;
-  }
+    const response = await api.delete(`/products/${id}`);
+    return response.data?.data || response.data;
+  },
 };
