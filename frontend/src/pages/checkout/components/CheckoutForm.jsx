@@ -24,7 +24,13 @@ export const CheckoutForm = ({
         </p>
       </div>
 
-      <AlertError>{error}</AlertError>
+      {error && (
+          <AlertError>{error}</AlertError>
+      )}
+
+      <p className="font-inter text-xs text-gray-500 -mt-2">
+        <span className="text-error font-semibold">*</span> Campos obligatorios
+      </p>
 
       <FormField
         id="fullName"
@@ -41,10 +47,10 @@ export const CheckoutForm = ({
         autoComplete="name"
         error={fieldErrors.fullName}
         disabled={submitting}
+        required
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
         <FormField
           id="address"
           name="address"
@@ -60,6 +66,7 @@ export const CheckoutForm = ({
           autoComplete="street-address"
           error={fieldErrors.address}
           disabled={submitting}
+          required
         />
 
         <FormField
@@ -93,7 +100,7 @@ export const CheckoutForm = ({
           onChange={handleChange}
           disabled={submitting}
           placeholder="Ej: Timbre B, entregar en recepción..."
-          className="p-3 border border-gray-300 rounded-lg font-inter text-sm focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-all resize-none disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+          className="p-3 border border-gray-300 rounded-lg font-inter text-base sm:text-sm focus:outline-none focus:border-secondary focus-visible:ring-2 focus-visible:ring-secondary/30 transition-all resize-none disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
         />
       </div>
 

@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { Eye, ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
 
 export const HeroProductCard = ({
   product,
@@ -12,9 +13,12 @@ export const HeroProductCard = ({
   onMouseLeave,
 }) => {
   const navigate = useNavigate();
+  const [imageError, setImageError] = useState(false);
+
+  const imageSource = product?.imageUrl || product?.image;
 
   return (
-    <div 
+    <div
       className="flex-1 w-full flex justify-center lg:justify-end items-center"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -40,21 +44,34 @@ export const HeroProductCard = ({
               </span>
             </div>
 
-            {/* Imagen interactiva */}
-            <div className="relative aspect-4/3 w-full flex items-center justify-center overflow-hidden py-2">
-              <img
-                key={product.id}
-                src={product.imageUrl}
-                alt={product.name}
-                className="w-full h-full object-contain filter drop-shadow-[0_20px_25px_rgba(0,0,0,0.5)] transition-all duration-500 transform hover:scale-105"
-              />
+            {/* Imagen interactiva con contenedor seguro */}
+            <div className="relative aspect-4/3 w-full max-h-56 flex items-center justify-center overflow-hidden rounded-2xl bg-white/5">
+              {imageSource && !imageError ? (
+                <img
+                  key={product.id}
+                  src={imageSource}
+                  alt={product.name}
+                  onError={() => setImageError(true)}
+                  loading="eager"
+                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center gap-2 text-white/40">
+                  <ImageOff size={36} strokeWidth={1.5} />
+                  <span className="text-xs font-inter">
+                    Sin imagen disponible
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Footer con precio y acciones */}
             <div className="flex flex-col gap-4 border-t border-white/10 pt-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] text-gray-400 block font-medium">Precio final</span>
+                  <span className="text-[10px] text-gray-400 block font-medium">
+                    Precio final
+                  </span>
                   <span className="font-spartan font-bold text-2xl text-neutral-white">
                     USD {Number(product.price).toFixed(2)}
                   </span>
@@ -78,10 +95,13 @@ export const HeroProductCard = ({
                       <button
                         key={idx}
                         type="button"
-                        onClick={() => onSelectIndex(idx)}
+                        onClick={() => {
+                          setImageError(false);
+                          onSelectIndex(idx);
+                        }}
                         className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                          currentIndex === idx 
-                            ? "w-6 bg-highlight" 
+                          currentIndex === idx
+                            ? "w-6 bg-highlight"
                             : "w-1.5 bg-white/20 hover:bg-white/40"
                         }`}
                         aria-label={`Ir al producto ${idx + 1}`}
@@ -92,7 +112,10 @@ export const HeroProductCard = ({
                   <div className="flex items-center gap-1">
                     <button
                       type="button"
-                      onClick={onPrev}
+                      onClick={() => {
+                        setImageError(false);
+                        onPrev();
+                      }}
                       className="p-1.5 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                       aria-label="Producto anterior"
                     >
@@ -100,7 +123,10 @@ export const HeroProductCard = ({
                     </button>
                     <button
                       type="button"
-                      onClick={onNext}
+                      onClick={() => {
+                        setImageError(false);
+                        onNext();
+                      }}
                       className="p-1.5 rounded-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                       aria-label="Siguiente producto"
                     >
@@ -121,4 +147,5 @@ export const HeroProductCard = ({
       </div>
     </div>
   );
+
 };
