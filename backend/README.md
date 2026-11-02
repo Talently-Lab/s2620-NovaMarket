@@ -151,6 +151,32 @@ Respuesta `200`:
 }
 ```
 
+`GET /api/auth/me`
+
+Devuelve los datos del usuario autenticado. Requiere el header `Authorization: Bearer <token>`.
+
+Respuesta `200`:
+
+```json
+{
+  "success": true,
+  "message": "Perfil obtenido con éxito",
+  "data": {
+    "id": "uuid",
+    "email": "ana@correo.com",
+    "fullName": "Ana Pérez",
+    "role": "CLIENTE",
+    "createdAt": "2026-10-16T00:00:00.000Z"
+  }
+}
+```
+
+Errores:
+
+- `401` si no se envía token, es inválido o expiró, o el usuario ya no existe
+- `403` si el usuario está inactivo
+- `500` si ocurre un error interno
+
 ### Productos
 
 Las rutas `GET` son públicas. `POST`, `PUT` y `DELETE` requieren el header `Authorization: Bearer <token>` de un usuario con rol `ADMIN`. El precio se devuelve siempre como string con 2 decimales, por ejemplo `"49.90"`.

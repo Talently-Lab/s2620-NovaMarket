@@ -34,4 +34,14 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+const me = async (req, res) => {
+  try {
+    const data = await authService.getProfile(req.user.id);
+    successResponse(res, 200, 'Perfil obtenido con éxito', data);
+  } catch (error) {
+    const message = error.statusCode ? error.message : 'Error al obtener el perfil';
+    errorResponse(res, error.statusCode || 500, message, error.message);
+  }
+};
+
+module.exports = { register, login, me };
