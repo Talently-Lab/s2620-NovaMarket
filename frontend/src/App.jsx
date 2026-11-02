@@ -7,9 +7,10 @@ import { CartProvider } from "./context/CartContext";
 // COMPONENTES ESTRUCTURALES
 import { Layout } from "./components/organisms/Layout";
 import { PrivateRoute } from "./routes/PrivateRoute";
+import { AdminRoute } from "./routes/AdminRoute";
 
 // PÁGINAS
-import { Home, ProductsPage, ProductDetailPage, CartPage, CheckoutPage, LoginPage, RegisterPage, AdminPage, Ayuda } from "./pages";
+import { Home, ProductsPage, ProductDetailPage, CartPage, CheckoutPage, LoginPage, RegisterPage, AdminPage, Ayuda, AboutUsPage, AccountPage } from "./pages";
 
 export const App = () => {
   return (
@@ -23,21 +24,24 @@ export const App = () => {
 
             {/* RUTAS ESTRUCTURALES (Con Layout) */}
             <Route element={<Layout />}>
+
               {/* RUTAS PÚBLICAS DE NAVEGACIÓN */}
               <Route path="/" element={<Home />} />
               <Route path="/categorias" element={<ProductsPage />} />
               <Route path="/categorias/:category" element={<ProductsPage />} />
+              <Route path="/nosotros" element={<AboutUsPage />} />
               <Route path="/producto/:id" element={<ProductDetailPage />} />
               <Route path="/carrito" element={<CartPage />} />
               <Route path="/ayuda" element={<Ayuda />} />
 
               {/* RUTAS PROTEGIDAS */}
               <Route element={<PrivateRoute />}>
-                <Route
-                  path="/cuenta"
-                  element={<div>Mi Cuenta (Protegido)</div>}
-                />
+                <Route path="/cuenta" element={<AccountPage />} />
                 <Route path="/checkout" element={<CheckoutPage />} />
+              </Route>
+
+              {/* RUTAS PROTEGIDAS ADMIN */}
+              <Route element={<AdminRoute />}>
                 <Route path="/admin" element={<AdminPage />} />
               </Route>
             </Route>
@@ -46,5 +50,4 @@ export const App = () => {
       </CartProvider>
     </AuthProvider>
   );
-
 };

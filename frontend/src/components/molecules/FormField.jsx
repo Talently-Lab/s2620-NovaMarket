@@ -1,5 +1,4 @@
-// Campo de formulario: etiqueta conectada, borde rojo y mensaje de ayuda cuando hay error.
-// error = texto (muestra borde rojo + mensaje) | true (solo borde rojo) | falsy (sin error)
+
 export const FormField = ({
   id,
   label,
@@ -11,12 +10,15 @@ export const FormField = ({
   autoComplete,
   error,
   disabled = false,
+  required = false,
 }) => {
   const message = typeof error === "string" ? error : null;
   const errorId = message ? `${id}-error` : undefined;
 
-  const normal = "border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary";
-  const withError = "border-2 border-error bg-error-light focus:ring-1 focus:ring-error";
+  const typography = "font-inter text-base sm:text-sm";
+
+  const normal = "border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary focus-visible:ring-2 focus-visible:ring-secondary/40";
+  const withError = "border-2 border-error bg-error-light focus:ring-1 focus:ring-error focus-visible:ring-2 focus-visible:ring-error/40";
   const blocked = "disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed";
 
   return (
@@ -32,17 +34,18 @@ export const FormField = ({
         onChange={onChange}
         placeholder={placeholder}
         autoComplete={autoComplete}
-        required
+        required={required}
         disabled={disabled}
         aria-invalid={Boolean(error)}
         aria-describedby={errorId}
-        className={`p-3 rounded-lg focus:outline-none transition-all ${error ? withError : normal} ${blocked}`}
+        className={`p-3 rounded-lg focus:outline-none transition-all ${typography} ${error ? withError : normal} ${blocked}`}
       />
       {message && (
-        <p id={errorId} className="font-inter text-xs text-error">
+        <p id={errorId} role="alert" className="font-inter text-xs text-error">
           {message}
         </p>
       )}
     </div>
   );
+
 };

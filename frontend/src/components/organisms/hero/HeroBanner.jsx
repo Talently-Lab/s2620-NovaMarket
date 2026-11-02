@@ -95,14 +95,6 @@ export const HeroBanner = () => {
               />
             </Button>
 
-            <Button
-              variant="outline"
-              fullWidth
-              onClick={() => navigate("/ofertas")}
-              className="sm:w-auto py-3 px-8 text-sm sm:text-base"
-            >
-              Ver ofertas
-            </Button>
           </div>
 
           <div className="flex items-center gap-8 pt-4 border-t border-white/10 w-full text-xs font-inter text-gray-400">

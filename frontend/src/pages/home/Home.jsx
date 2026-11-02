@@ -9,8 +9,8 @@ export const Home = () => {
       <HeroBanner />
 
       <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-16 flex flex-col gap-20">
-        <FeatureList />
         <FeaturedProducts />
+        <FeatureList />
         <CategoryList />
       </div>
     </div>
