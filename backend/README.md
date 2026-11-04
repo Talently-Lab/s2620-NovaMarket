@@ -24,6 +24,7 @@ npm run dev
 
 El servidor escucha en el puerto definido en `PORT` y, si no está definido, en el 3000.
 La app usa `DATABASE_URL` (puerto 6543, Transaction Pooler) en runtime. La CLI de Prisma usa `DIRECT_URL` (puerto 5432) para las migraciones.
+El entorno lo decide el `.env`: en local apunta a la BD de dev; en Render se cargan los valores de prod.
 
 ## Datos de prueba (seed)
 
@@ -329,6 +330,15 @@ Salvo en `POST`, todavía no hay validación en la capa de controlador para prod
 
 - Variables de entorno necesarias: `DATABASE_URL`, `DIRECT_URL`, `JWT_SECRET` y `JWT_EXPIRES_IN`.
 
+## Despliegue en Render (pendiente)
+
+- [ ] Agregar `"engines": { "node": ">=20.19" }` en `package.json` (Prisma v7 lo requiere).
+- [ ] Configurar el Web Service con Root Directory `backend`, Build Command `npm install && npx prisma generate`, Start Command `npm start` y Health Check Path `/api/health`.
+- [ ] Cargar en Render (Environment) `DATABASE_URL` (prod), `JWT_SECRET` (distinto al de dev), `JWT_EXPIRES_IN` y `CORS_ORIGIN` (URL del frontend desplegado).
+- [ ] No definir `PORT` (lo asigna Render).
+- [ ] Aplicar las migraciones en prod a mano antes del primer deploy (ver "Aplicar en producción").
+- [ ] Probar `GET /api/health` y el login con la URL de Render.
+
 ## Tests
 
 Los tests unitarios usan Jest y Supertest con el servicio mockeado, así que no se conectan a la base de datos.
@@ -341,18 +351,22 @@ npm test
 ## Migraciones
 ### Crear una migración (dev)
 
-1. Editar `prisma/schema.prisma`.
-2. Generar y aplicar en dev: `npm run migrate:dev -- --name <descripcion>`
-3. Revisar el `migration.sql` generado.
-4. Verificar que dev quedó al día: `npm run migrate:status:dev`
+Usa la `DIRECT_URL` del `.env` (BD de dev).
 
-Para cambios solo de datos (sin tocar el schema), en lugar de los pasos 1 y 2: crear la migración vacía con `npm run migrate:dev -- --create-only --name <descripcion>`, escribir el SQL en su `migration.sql` y aplicarla con `npm run migrate:dev`.
+1. Editar `prisma/schema.prisma`.
+2. Generar y aplicar en dev: `npx prisma migrate dev --name <descripcion>`
+3. Revisar el `migration.sql` generado.
+4. Verificar que dev quedó al día: `npx prisma migrate status`
+
+Para cambios solo de datos (sin tocar el schema), en lugar de los pasos 1 y 2: crear la migración vacía con `npx prisma migrate dev --create-only --name <descripcion>`, escribir el SQL en su `migration.sql` y aplicarla con `npx prisma migrate dev`.
 
 ### Aplicar en producción (manual, después del merge)
 
-1. Ver migraciones pendientes: `npm run migrate:status:prod`
-2. Aplicar: `npm run migrate:prod`
-3. Confirmar que prod quedó al día: `npm run migrate:status:prod`
+Se pasa la URL de prod (puerto 5432) en el comando; tiene prioridad sobre el `.env`. El espacio inicial evita que quede en el historial de la terminal.
+
+1. Ver migraciones pendientes: ` DIRECT_URL="<url prod>" npx prisma migrate status`
+2. Aplicar: ` DIRECT_URL="<url prod>" npx prisma migrate deploy`
+3. Confirmar que prod quedó al día: repetir el paso 1.
 
 ### Corregir una migración ya mergeada
 

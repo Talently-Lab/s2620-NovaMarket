@@ -16,9 +16,10 @@ jest.mock('../src/middlewares/auth.middleware', () => ({
 const app = require('../app');
 const productService = require('../src/services/product.service');
 
+const PRODUCT_ID = '3f2c1b9a-8d4e-4f6a-9b2c-1e5d7a8c9f01';
 const timestamp = '2026-10-16T00:00:00.000Z';
 const existing = {
-  id: 'uuid',
+  id: PRODUCT_ID,
   name: 'Teclado mecánico',
   description: null,
   price: 49.9,
@@ -39,7 +40,7 @@ describe('PUT /api/products/:id', () => {
 
   it('debe retornar 400 si el precio es inválido o el name está vacío', async () => {
     const res = await request(app)
-      .put('/api/products/uuid')
+      .put(`/api/products/${PRODUCT_ID}`)
       .send({ name: '  ', price: 10.555 });
 
     expect(res.status).toBe(400);
@@ -50,7 +51,7 @@ describe('PUT /api/products/:id', () => {
   });
 
   it('debe retornar 400 si el stock no es un entero >= 0', async () => {
-    const res = await request(app).put('/api/products/uuid').send({ stock: -1 });
+    const res = await request(app).put(`/api/products/${PRODUCT_ID}`).send({ stock: -1 });
 
     expect(res.status).toBe(400);
     expect(res.body.error).toContain('stock debe ser un entero >= 0');
@@ -58,7 +59,7 @@ describe('PUT /api/products/:id', () => {
   });
 
   it('debe retornar 400 si el body está vacío', async () => {
-    const res = await request(app).put('/api/products/uuid').send({});
+    const res = await request(app).put(`/api/products/${PRODUCT_ID}`).send({});
 
     expect(res.status).toBe(400);
     expect(res.body.error).toContain('debe enviar al menos un campo para actualizar');
@@ -66,20 +67,20 @@ describe('PUT /api/products/:id', () => {
   });
 
   it('debe retornar 200 actualizando solo un campo', async () => {
-    const res = await request(app).put('/api/products/uuid').send({ price: 59.9 });
+    const res = await request(app).put(`/api/products/${PRODUCT_ID}`).send({ price: 59.9 });
 
     expect(res.status).toBe(200);
     expect(res.body).toMatchObject({
       success: true,
       message: 'Producto actualizado con éxito',
-      data: { id: 'uuid', name: 'Teclado mecánico', price: '59.90' },
+      data: { id: PRODUCT_ID, name: 'Teclado mecánico', price: '59.90' },
     });
-    expect(productService.updateProduct).toHaveBeenCalledWith('uuid', expect.objectContaining({ price: 59.9 }));
+    expect(productService.updateProduct).toHaveBeenCalledWith(PRODUCT_ID, expect.objectContaining({ price: 59.9 }));
   });
 
   it('no debe pasar al servicio campos no permitidos', async () => {
     const res = await request(app)
-      .put('/api/products/uuid')
+      .put(`/api/products/${PRODUCT_ID}`)
       .send({ name: 'Mouse', id: 'otro-id', createdAt: '2000-01-01T00:00:00.000Z' });
 
     expect(res.status).toBe(200);

@@ -19,8 +19,7 @@ const handleError = (res, error, fallbackMessage, knownErrors = {}) => {
     return errorResponse(res, error.statusCode, error.message, error.code);
   }
   console.error(error);
-  const detail = process.env.NODE_ENV === 'production' ? 'INTERNAL_ERROR' : error.message;
-  errorResponse(res, 500, fallbackMessage, detail);
+  errorResponse(res, 500, fallbackMessage, 'INTERNAL_ERROR');
 };
 
 module.exports = { successResponse, errorResponse, validationErrorResponse, handleError };
