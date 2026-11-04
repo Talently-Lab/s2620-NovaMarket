@@ -1,14 +1,11 @@
 const prisma = require('../config/prisma');
 const { hashPassword, comparePassword } = require('../utils/hash');
 const { signToken } = require('../utils/jwt');
+const { httpError } = require('../utils/httpError');
 
 const registerUser = async ({ email, password, fullName }) => {
   const existing = await prisma.user.findUnique({ where: { email } });
-  if (existing) {
-    const error = new Error('El email ya está registrado');
-    error.statusCode = 409;
-    throw error;
-  }
+  if (existing) throw httpError(409, 'EMAIL_ALREADY_REGISTERED', 'El email ya está registrado');
 
   const passwordHash = await hashPassword(password);
   const user = await prisma.user.create({
@@ -21,11 +18,8 @@ const registerUser = async ({ email, password, fullName }) => {
 };
 
 // Mismo error para email inexistente y contraseña incorrecta (evita enumeración de usuarios)
-const invalidCredentials = () => {
-  const error = new Error('Credenciales inválidas');
-  error.statusCode = 401;
-  return error;
-};
+const invalidCredentials = () => httpError(401, 'INVALID_CREDENTIALS', 'Credenciales inválidas');
+const userInactive = () => httpError(403, 'USER_INACTIVE', 'Usuario inactivo');
 
 const loginUser = async ({ email, password }) => {
   const user = await prisma.user.findUnique({ where: { email } });
@@ -34,11 +28,7 @@ const loginUser = async ({ email, password }) => {
   const valid = await comparePassword(password, user.passwordHash);
   if (!valid) throw invalidCredentials();
 
-  if (user.notActive) {
-    const error = new Error('Usuario inactivo');
-    error.statusCode = 403;
-    throw error;
-  }
+  if (user.notActive) throw userInactive();
 
   const token = signToken({ id: user.id, email: user.email, role: user.role });
   return {
@@ -47,4 +37,18 @@ const loginUser = async ({ email, password }) => {
   };
 };
 
-module.exports = { registerUser, loginUser };
+const getProfile = async (userId) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, email: true, fullName: true, role: true, notActive: true, createdAt: true },
+  });
+
+  if (!user) throw httpError(401, 'USER_NOT_FOUND', 'Usuario no encontrado');
+
+  if (user.notActive) throw userInactive();
+
+  const { notActive, ...profile } = user;
+  return profile;
+};
+
+module.exports = { registerUser, loginUser, getProfile };

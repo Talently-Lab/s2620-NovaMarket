@@ -35,6 +35,6 @@ describe('GET /api/categories', () => {
     const res = await request(app).get('/api/categories');
 
     expect(res.status).toBe(500);
-    expect(res.body).toEqual({ success: false, message: 'Error al obtener categorías', error: 'DB caída' });
+    expect(res.body).toEqual({ success: false, message: 'Error al obtener categorías', error: 'INTERNAL_ERROR' });
   });
 });

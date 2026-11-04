@@ -1,5 +1,7 @@
+const { successResponse } = require('../utils/response');
+
 const check = (req, res) => {
-  res.status(200).json({ status: 'OK' });
+  successResponse(res, 200, 'API operativa', { status: 'OK' });
 };
 
 module.exports = { check };

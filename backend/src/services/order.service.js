@@ -1,15 +1,9 @@
 const { Prisma } = require('@prisma/client');
 const prisma = require('../config/prisma');
+const { httpError } = require('../utils/httpError');
 
 const include = {
   orderItems: { include: { product: { select: { name: true } } } },
-};
-
-const httpError = (statusCode, code, message) => {
-  const error = new Error(message);
-  error.statusCode = statusCode;
-  error.code = code;
-  return error;
 };
 
 const formatOrder = ({ orderItems, totalAmount, ...order }) => ({

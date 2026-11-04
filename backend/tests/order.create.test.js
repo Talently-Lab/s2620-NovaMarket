@@ -20,7 +20,8 @@ jest.mock('../src/middlewares/auth.middleware', () => ({
 const app = require('../app');
 const orderService = require('../src/services/order.service');
 
-const items = [{ productId: 'product-uuid', quantity: 2 }];
+const PRODUCT_ID = '3f2c1b9a-8d4e-4f6a-9b2c-1e5d7a8c9f01';
+const items = [{ productId: PRODUCT_ID, quantity: 2 }];
 const shippingAddress = { street: 'Av. Siempre Viva 742', city: 'Lima' };
 
 describe('POST /api/orders', () => {
@@ -30,7 +31,8 @@ describe('POST /api/orders', () => {
 
   it.each([
     ['items vacío', { items: [], shippingAddress }],
-    ['quantity inválida', { items: [{ productId: 'product-uuid', quantity: 0 }], shippingAddress }],
+    ['quantity inválida', { items: [{ productId: PRODUCT_ID, quantity: 0 }], shippingAddress }],
+    ['productId que no es UUID', { items: [{ productId: 'no-es-uuid', quantity: 1 }], shippingAddress }],
     ['sin shippingAddress', { items }],
   ])('debe retornar 400 con %s', async (_, body) => {
     const res = await request(app).post('/api/orders').send(body);
@@ -47,7 +49,7 @@ describe('POST /api/orders', () => {
       status: 'CONFIRMED',
       shippingAddress,
       totalAmount: '59.98',
-      items: [{ productId: 'product-uuid', quantity: 2, unitPrice: '29.99' }],
+      items: [{ productId: PRODUCT_ID, quantity: 2, unitPrice: '29.99' }],
     });
 
     const res = await request(app).post('/api/orders').send({ items, shippingAddress });
@@ -59,7 +61,7 @@ describe('POST /api/orders', () => {
   });
 
   it('debe retornar 409 si no hay stock suficiente', async () => {
-    const error = new Error('Stock insuficiente o producto no disponible: product-uuid');
+    const error = new Error(`Stock insuficiente o producto no disponible: ${PRODUCT_ID}`);
     error.statusCode = 409;
     error.code = 'INSUFFICIENT_STOCK';
     orderService.createOrder.mockRejectedValue(error);

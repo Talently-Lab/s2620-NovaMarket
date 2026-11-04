@@ -1,14 +1,15 @@
 const { Router } = require('express');
 const productController = require('../controllers/product.controller');
 const { authenticate, authorize } = require('../middlewares/auth.middleware');
+const { validateUuidParam } = require('../middlewares/validateId.middleware');
 
 const router = Router();
 
 router.get('/', productController.getAll);
 router.get('/category/:categoryName', productController.getByCategory);
-router.get('/:id', productController.getById);
+router.get('/:id', validateUuidParam(), productController.getById);
 router.post('/', authenticate, authorize('ADMIN'), productController.create);
-router.put('/:id', authenticate, authorize('ADMIN'), productController.update);
-router.delete('/:id', authenticate, authorize('ADMIN'), productController.remove);
+router.put('/:id', authenticate, authorize('ADMIN'), validateUuidParam(), productController.update);
+router.delete('/:id', authenticate, authorize('ADMIN'), validateUuidParam(), productController.remove);
 
 module.exports = router;

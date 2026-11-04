@@ -1,19 +1,12 @@
 const orderService = require('../services/order.service');
-const { successResponse, errorResponse } = require('../utils/response');
+const { successResponse, errorResponse, validationErrorResponse, handleError } = require('../utils/response');
 const { validateCreateOrder, validateUpdateStatus } = require('../validators/order.validator');
-
-const handleError = (res, error, fallbackMessage) => {
-  if (error.statusCode) {
-    return errorResponse(res, error.statusCode, error.message, error.code);
-  }
-  errorResponse(res, 500, fallbackMessage, error.message);
-};
 
 const create = async (req, res) => {
   const body = req.body ?? {};
   const errors = validateCreateOrder(body);
   if (errors.length) {
-    return errorResponse(res, 400, 'Datos del pedido inválidos', `VALIDATION_ERROR: ${errors.join(', ')}`);
+    return validationErrorResponse(res, 'Datos del pedido inválidos', errors);
   }
 
   try {
@@ -67,7 +60,7 @@ const updateStatus = async (req, res) => {
   const body = req.body ?? {};
   const errors = validateUpdateStatus(body);
   if (errors.length) {
-    return errorResponse(res, 400, 'Estado de orden inválido', `VALIDATION_ERROR: ${errors.join(', ')}`);
+    return validationErrorResponse(res, 'Estado de orden inválido', errors);
   }
 
   try {
