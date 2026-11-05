@@ -28,7 +28,6 @@ export const FeaturedProducts = () => {
       )}
 
       {!error && (
-        /* gap-x-3 / gap-x-4 separa las columnas; gap-y-6 da aire entre la fila superior e inferior */
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-3 gap-y-6 sm:gap-4 md:gap-6">
           {loading ? (
             Array.from({ length: 4 }).map((_, index) => (
@@ -39,10 +38,11 @@ export const FeaturedProducts = () => {
               No hay productos destacados por el momento.
             </p>
           ) : (
-            featured.map((product) => (
+            featured.map((product, index) => (
               <ProductCard 
                 key={product.id}
                 {...product}
+                isPriority={index === 0} 
               />
             ))
           )}
