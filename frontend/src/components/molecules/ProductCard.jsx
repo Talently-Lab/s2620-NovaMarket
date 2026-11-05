@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../atoms/Button";
 
@@ -9,8 +10,20 @@ export const ProductCard = ({
   imageUrl,
   category,
   imageIcon,
+  isPriority = false, 
 }) => {
   const fallbackImage = `https://placehold.co/400x300/F4F7FB/8592A3?text=Sin+Imagen`;
+  
+  const imgRef = useRef(null);
+
+  const isFakeDomain = imageUrl && imageUrl.includes('cdn.novamarket.com');
+  const safeImageUrl = (imageUrl && !isFakeDomain) ? imageUrl : fallbackImage;
+
+  useEffect(() => {
+    if (isPriority && imgRef.current) {
+      imgRef.current.setAttribute('fetchpriority', 'high');
+    }
+  }, [isPriority]);
 
   const handleImageError = (e) => {
     e.target.onerror = null;
@@ -25,13 +38,17 @@ export const ProductCard = ({
   return (
     <div className="flex flex-col bg-neutral-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow w-full min-w-0">
       <div className="bg-[#F4F7FB] aspect-4/3 flex items-center justify-center text-secondary overflow-hidden shrink-0">
-        {imageIcon && !imageUrl ? (
+        {imageIcon && !safeImageUrl ? (
           imageIcon
         ) : (
           <img
-            src={imageUrl || fallbackImage}
+            ref={imgRef}
+            src={safeImageUrl}
             alt={name}
             onError={handleImageError}
+            width="400"
+            height="300"
+            loading={isPriority ? "eager" : "lazy"}
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           />
         )}
@@ -72,5 +89,4 @@ export const ProductCard = ({
       </div>
     </div>
   );
-
 };

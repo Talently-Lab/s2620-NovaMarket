@@ -13,8 +13,20 @@ export const Footer = () => {
         
         <div className="flex flex-col items-center md:items-start gap-3 w-full md:w-auto pb-4 border-b border-white/10 md:border-none md:pb-0">
           <Link to="/" className="flex items-center gap-2">
-            <img src={isotipo} alt="Icono" className="h-6 w-auto object-contain" />
-            <img src={logotipo} alt="NovaMarket" className="h-4 md:h-5 w-auto object-contain" />
+            <img 
+              src={isotipo} 
+              alt="Icono" 
+              width="24" 
+              height="24" 
+              className="h-6 w-auto object-contain" 
+            />
+            <img 
+              src={logotipo} 
+              alt="NovaMarket" 
+              width="120" 
+              height="24" 
+              className="h-4 md:h-5 w-auto object-contain" 
+            />
           </Link>
           <p className="text-sm text-gray-300 font-inter">
             Tecnología que se siente fácil.

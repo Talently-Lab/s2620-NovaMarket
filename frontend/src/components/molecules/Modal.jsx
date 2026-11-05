@@ -21,32 +21,35 @@ export const Modal = ({
   useEffect(() => {
     if (!isOpen) return;
 
-    // Guarda el elemento que disparó el modal para devolverle el foco al salir
     previousActiveElement.current = document.activeElement;
 
     const modalElement = modalRef.current;
     if (!modalElement) return;
 
-    // Selectores focusables para atrapar el Tab
     const focusableSelectors =
       'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
-    const focusableElements = modalElement.querySelectorAll(focusableSelectors);
 
-    if (focusableElements.length > 0) {
-      focusableElements[0].focus();
+    const currentFocus = document.activeElement;
+    const isFocusInsideModal = modalElement.contains(currentFocus);
+
+    if (!isFocusInsideModal) {
+      const focusableElements =
+        modalElement.querySelectorAll(focusableSelectors);
+      if (focusableElements.length > 0) {
+        focusableElements[0].focus();
+      }
     }
 
     const handleKeyDown = (event) => {
-      // Cierre con Escape
       if (event.key === "Escape" && !disabledClose && onClose) {
         event.preventDefault();
         onClose();
         return;
       }
 
-      // Focus Trap con Tab / Shift+Tab
       if (event.key === "Tab") {
-        const currentFocusables = modalElement.querySelectorAll(focusableSelectors);
+        const currentFocusables =
+          modalElement.querySelectorAll(focusableSelectors);
         if (currentFocusables.length === 0) return;
 
         const first = currentFocusables[0];
@@ -70,16 +73,15 @@ export const Modal = ({
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      if (previousActiveElement.current) {
+      if (previousActiveElement.current && !isOpen) {
         previousActiveElement.current.focus();
       }
     };
   }, [isOpen, onClose, disabledClose]);
 
-  // Si no está abierto o el DOM no montó aún, no renderiza nada
   if (!isOpen || !mounted) return null;
 
-  // Renderizado directamente en document.body para cubrir toda la pantalla
+
   return createPortal(
     <div
       role="dialog"
@@ -97,7 +99,10 @@ export const Modal = ({
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           {title && (
-            <h3 id="modal-title" className="font-spartan font-bold text-lg text-primary">
+            <h3
+              id="modal-title"
+              className="font-spartan font-bold text-lg text-primary"
+            >
               {title}
             </h3>
           )}
@@ -112,11 +117,10 @@ export const Modal = ({
           </button>
         </div>
 
-        <div className="overflow-y-auto flex-1">
-          {children}
-        </div>
+        <div className="overflow-y-auto flex-1">{children}</div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
+
 };
