@@ -106,12 +106,6 @@ export const Ayuda = () => {
             9:00 a 18:00 hs para ayudarte a elegir el equipamiento ideal o
             resolver cualquier inconveniente.
           </p>
-          <button
-            type="button"
-            className="mt-4 bg-secondary hover:bg-secondary/90 text-white font-bold py-3 px-8 rounded-xl transition-colors cursor-pointer shadow-md"
-          >
-            Contactar Soporte
-          </button>
         </div>
 
         <div className="w-full md:w-[55%] relative min-h-62.5 md:min-h-auto">
