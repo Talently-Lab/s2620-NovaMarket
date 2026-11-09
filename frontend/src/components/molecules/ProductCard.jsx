@@ -25,10 +25,10 @@ export const ProductCard = ({
     }
   }, [isPriority]);
 
-  const handleImageError = (e) => {
-    e.target.onerror = null;
-    e.target.src = fallbackImage;
-  };
+  const handleImageError = (e, id) => {
+  e.target.onerror = null;
+  e.target.src = `https://picsum.photos/seed/novamarket-${id || 'default'}/100/100`;
+};
 
   const formattedPrice =
     price !== undefined && price !== null
