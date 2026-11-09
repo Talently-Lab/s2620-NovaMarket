@@ -3,6 +3,7 @@ import { Package, ChevronDown, Calendar, MapPin, X, AlertTriangle } from 'lucide
 import { ORDER_STATUS_CONFIG } from '../../const/orderStatus';
 import { orderService } from '../../services/orderService';
 import { Button } from '../atoms/Button';
+import { AlertError } from '../atoms/AlertError';
 import { Modal } from '../molecules/Modal';
 
 export const OrderCard = ({ order, onOrderUpdated }) => {
@@ -10,6 +11,7 @@ export const OrderCard = ({ order, onOrderUpdated }) => {
   
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState('');
 
   const rawStatus = (order.status || 'CONFIRMED').toUpperCase();
   const statusInfo = ORDER_STATUS_CONFIG[rawStatus] || ORDER_STATUS_CONFIG.CONFIRMED;
@@ -25,14 +27,26 @@ export const OrderCard = ({ order, onOrderUpdated }) => {
       })
     : 'Fecha reciente';
 
+  const handleOpenCancelModal = () => {
+    setCancelError('');
+    setShowCancelModal(true);
+  };
+
+  const handleCloseCancelModal = () => {
+    if (cancelling) return;
+    setCancelError('');
+    setShowCancelModal(false);
+  };
+
   const confirmCancel = async () => {
     try {
       setCancelling(true);
+      setCancelError('');
       await orderService.cancelOrder(order.id || order._id);
       setShowCancelModal(false);
       if (onOrderUpdated) onOrderUpdated();
     } catch (error) {
-      alert(error.response?.data?.message || 'No se pudo cancelar el pedido');
+      setCancelError(error.response?.data?.message || 'No se pudo cancelar el pedido. Intentá de nuevo.');
     } finally {
       setCancelling(false);
     }
@@ -133,8 +147,8 @@ export const OrderCard = ({ order, onOrderUpdated }) => {
                 <div className="mt-2 pt-3 border-t border-gray-100 flex justify-end">
                   <Button 
                     variant="outline" 
-                    className="text-xs text-error-dark border-error/30 hover:bg-error-light hover:border-error min-h-8 py-1.5"
-                    onClick={() => setShowCancelModal(true)}
+                    className="text-xs text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 min-h-8 py-1.5"
+                    onClick={handleOpenCancelModal}
                   >
                     <X size={14} className="mr-1 inline-block" />
                     Cancelar pedido
@@ -148,14 +162,14 @@ export const OrderCard = ({ order, onOrderUpdated }) => {
 
       <Modal 
         isOpen={showCancelModal} 
-        onClose={() => setShowCancelModal(false)} 
+        onClose={handleCloseCancelModal} 
         title="¿Cancelar pedido?"
         maxWidth="max-w-sm"
         disabledClose={cancelling}
       >
-        <div className="p-6 flex flex-col gap-5">
+        <div className="p-6 flex flex-col gap-4">
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-full bg-error-light text-error-dark flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0">
               <AlertTriangle size={20} />
             </div>
             <p className="font-inter text-sm text-gray-600 leading-relaxed pt-1">
@@ -163,23 +177,32 @@ export const OrderCard = ({ order, onOrderUpdated }) => {
             </p>
           </div>
 
-          <div className="flex items-center justify-end gap-3 mt-2">
+          {cancelError && (
+            <div className="mt-1">
+              <AlertError message={cancelError} />
+            </div>
+          )}
+
+          <div className="flex items-center justify-end gap-3 mt-3">
             <Button 
               variant="outline" 
-              onClick={() => setShowCancelModal(false)}
+              data-initial-focus
+              autoFocus
+              onClick={handleCloseCancelModal}
               disabled={cancelling}
               className="text-sm px-4 min-h-10"
             >
               Volver
             </Button>
+
             <Button 
-              variant="outline"
+              type="button"
               onClick={confirmCancel}
               loading={cancelling}
               disabled={cancelling}
-              className="text-sm px-4 min-h-10"
+              className="text-sm px-4 min-h-10 bg-red-600 hover:bg-red-700 text-white border-transparent focus:ring-2 focus:ring-red-500 focus:ring-offset-1 font-medium transition-colors"
             >
-              Sí, cancelar
+              {cancelling ? 'Cancelando...' : 'Sí, cancelar'}
             </Button>
           </div>
         </div>

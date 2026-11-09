@@ -1,4 +1,3 @@
-
 export const FormField = ({
   id,
   label,
@@ -11,7 +10,11 @@ export const FormField = ({
   error,
   disabled = false,
   required = false,
+  as = "input",
+  rows,
+  ...rest
 }) => {
+  const Component = as;
   const message = typeof error === "string" ? error : null;
   const errorId = message ? `${id}-error` : undefined;
 
@@ -24,11 +27,11 @@ export const FormField = ({
   return (
     <div className="flex flex-col gap-1">
       <label htmlFor={id} className="font-inter text-sm font-medium text-primary">
-        {label}
+        {label} {required && <span className="text-error">*</span>}
       </label>
-      <input
+      <Component
         id={id}
-        type={type}
+        type={as === "textarea" ? undefined : type}
         name={name}
         value={value}
         onChange={onChange}
@@ -36,9 +39,11 @@ export const FormField = ({
         autoComplete={autoComplete}
         required={required}
         disabled={disabled}
+        rows={rows}
         aria-invalid={Boolean(error)}
         aria-describedby={errorId}
-        className={`p-3 rounded-lg focus:outline-none transition-all ${typography} ${error ? withError : normal} ${blocked}`}
+        className={`p-3 rounded-lg focus:outline-none transition-all ${typography} ${error ? withError : normal} ${blocked} ${as === "textarea" ? "resize-none" : ""}`}
+        {...rest}
       />
       {message && (
         <p id={errorId} role="alert" className="font-inter text-xs text-error">
@@ -47,5 +52,4 @@ export const FormField = ({
       )}
     </div>
   );
-
 };

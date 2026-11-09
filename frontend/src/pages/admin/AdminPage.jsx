@@ -1,7 +1,10 @@
+import { useState, useCallback } from 'react';
 import { Plus, Pencil, Trash2, Package } from 'lucide-react';
 import { useAdminProducts } from '../../hooks/useAdminProducts';
 import { ProductFormModal } from '../../components/organisms/ProductFormModal';
+import { DeleteProductModal } from '../../components/organisms/DeleteProductModal';
 import { Button } from '../../components/atoms/Button';
+import { AlertError } from '../../components/atoms/AlertError';
 
 export const AdminPage = () => {
   const {
@@ -23,6 +26,38 @@ export const AdminPage = () => {
     handleImageError,
     formatPrice
   } = useAdminProducts();
+
+  const [productToDelete, setProductToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
+
+  const handleOpenDeleteModal = (product) => {
+    setDeleteError('');
+    setProductToDelete(product);
+  };
+
+  const handleCloseDeleteModal = useCallback(() => {
+    if (isDeleting) return;
+    setDeleteError('');
+    setProductToDelete(null);
+  }, [isDeleting]);
+
+  const handleConfirmDelete = async () => {
+    if (!productToDelete) return;
+
+    try {
+      setIsDeleting(true);
+      setDeleteError('');
+      await handleDelete(productToDelete);
+      handleCloseDeleteModal();
+    } catch (err) {
+      setDeleteError(
+        err?.response?.data?.message || 'Error al eliminar el producto. Intentá nuevamente.'
+      );
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 md:px-6 py-8 flex flex-col gap-6 animate-fade-in">
@@ -50,8 +85,8 @@ export const AdminPage = () => {
       </div>
 
       {error && (
-        <div className="bg-red-50 text-red-500 p-4 rounded-xl font-inter text-sm">
-          {error}
+        <div className="w-full">
+          <AlertError message={error} />
         </div>
       )}
 
@@ -152,7 +187,7 @@ export const AdminPage = () => {
                           </button>
                           <button
                             type="button"
-                            onClick={() => handleDelete(product)}
+                            onClick={() => handleOpenDeleteModal(product)}
                             title="Eliminar producto"
                             className="p-2 rounded-lg text-gray-600 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                           >
@@ -179,6 +214,15 @@ export const AdminPage = () => {
         saving={saving}
         onChange={handleChange}
         onSubmit={handleSubmit}
+      />
+
+      <DeleteProductModal
+        isOpen={Boolean(productToDelete)}
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDelete}
+        product={productToDelete}
+        deleting={isDeleting}
+        error={deleteError}
       />
     </div>
   );

@@ -1,14 +1,21 @@
-import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   plugins: [
     react(),
-    tailwindcss()
+    tailwindcss(),
   ],
   server: {
     port: 5173,
+    proxy: {
+      '/api': {
+        target: 'https://s2620-novamarket-backend.onrender.com',
+        changeOrigin: true,
+        secure: true,
+      },
+    },
   },
   preview: {
     port: 5173,
@@ -19,14 +26,14 @@ export default defineConfig({
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            return 'vendor'; 
+            return 'vendor';
           }
-        }
-      }
-    }
+        },
+      },
+    },
   },
   test: {
     globals: true,
-    environment: 'jsdom'
-  }
-})
+    environment: 'jsdom',
+  },
+});
