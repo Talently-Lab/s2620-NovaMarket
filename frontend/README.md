@@ -6,17 +6,15 @@ Este repositorio contiene el código frontend para el MVP de **NovaMarket**, un 
 
 | Vista Principal (Home & Hero) | Catálogo de Productos |
 | :---: | :---: |
-| ![Home](public/docs/screenshots/Home.png) | ![Catálogo](public/docs/screenshots/Catalogo.png) |
+| ![Home](../docs/screenshots/Home.png) | ![Catálogo](../docs/screenshots/Catalogo.png) |
 
 | Detalle de Producto | Centro de Ayuda (FAQ) |
 | :---: | :---: |
-| ![Detalle](public/docs/screenshots/DetalleProducto.png) | ![Ayuda](public/docs/screenshots/Ayuda.png) |
+| ![Detalle](../docs/screenshots/DetalleProducto.png) | ![Ayuda](../docs/screenshots/Ayuda.png) |
 
 | Panel de Cuenta y Pedidos | Checkout / Carrito |
 | :---: | :---: |
-| ![Cuenta](public/docs/screenshots/PanelCuenta.png) | ![Carrito](public/docs/screenshots/flujoCarrito.gif) |
-
----
+| ![Cuenta](../docs/screenshots/PanelCuenta.png) | ![Carrito](../docs/screenshots/flujoCarrito.gif) |
 
 
 ## 🛠️ Stack Tecnológico
