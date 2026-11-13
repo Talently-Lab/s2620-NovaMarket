@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useProducts } from "./useProducts";
 
@@ -7,6 +7,8 @@ export const useProductsCatalog = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const searchQuery = searchParams.get("search")?.trim() || "";
+  
+  const [sortOption, setSortOption] = useState("recent");
 
   const {
     products,
@@ -17,13 +19,28 @@ export const useProductsCatalog = () => {
     handleCategoryChange,
   } = useProducts(urlCategory || "Todos");
 
-  const filteredProducts = useMemo(() => {
-    if (!searchQuery) return products;
-    const query = searchQuery.toLowerCase();
-    return products.filter((product) =>
-      product.name?.toLowerCase().includes(query)
-    );
-  }, [products, searchQuery]);
+  const filteredAndSortedProducts = useMemo(() => {
+    let result = [...products];
+
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter((product) =>
+        product.name?.toLowerCase().includes(query)
+      );
+    }
+
+    switch (sortOption) {
+      case "price-asc":
+        return result.sort((a, b) => Number(a.price) - Number(b.price));
+      case "price-desc":
+        return result.sort((a, b) => Number(b.price) - Number(a.price));
+      case "name-asc":
+        return result.sort((a, b) => a.name.localeCompare(b.name));
+      case "recent":
+      default:
+        return result.sort((a, b) => b.id - a.id);
+    }
+  }, [products, searchQuery, sortOption]);
 
   const handleClearSearch = () => {
     const newParams = new URLSearchParams(searchParams);
@@ -34,17 +51,24 @@ export const useProductsCatalog = () => {
   const handleResetCatalog = () => {
     handleClearSearch();
     handleCategoryChange("Todos");
+    setSortOption("recent");
+  };
+
+  const handleSortChange = (newSort) => {
+    setSortOption(newSort);
   };
 
   return {
-    products: filteredProducts,
+    products: filteredAndSortedProducts,
     categories,
     selectedCategory,
     loading,
     error,
     searchQuery,
+    sortOption,
     handleCategoryChange,
     handleClearSearch,
     handleResetCatalog,
+    handleSortChange,
   };
 };

@@ -189,7 +189,7 @@ Este módulo de **Frontend** es parte del proyecto principal NovaMarket:
 - **Facundo Ledesma** — *Frontend Developer*  
   GitHub: [@FacuLedesmaBertalot](https://github.com/FacuLedesmaBertalot)
 
-- **Fátima Paz** — *Project Manager*
+- **Fátima Paz** — *Project Manager*  
   GitHub: [@falazarin](https://github.com/falazarin)
 
 - **Carina Luna** — *UX / UI*  

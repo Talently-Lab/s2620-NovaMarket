@@ -1,14 +1,19 @@
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { ShieldCheck } from 'lucide-react';
+import { AuthContext } from '../../context/AuthContext';
 import isotipo from '../../assets/novamarket-isotipo-reverse.svg';
 import logotipo from '../../assets/novamarket-logotipo-reverse.svg';
 import { SocialLinks } from '../molecules/SocialLinks';
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
+  
+  const { user } = useContext(AuthContext);
+  const isAdmin = user?.role?.toUpperCase() === 'ADMIN';
 
   return (
     <footer className="mt-auto w-full bg-primary text-gray-400 border-t border-white/10">
-
       <div className="w-full max-w-7xl mx-auto pt-8 pb-6 px-6 md:px-10 flex flex-col md:flex-row justify-between items-center md:items-start text-center md:text-left gap-6">
         
         <div className="flex flex-col items-center md:items-start gap-3 w-full md:w-auto pb-4 border-b border-white/10 md:border-none md:pb-0">
@@ -42,13 +47,24 @@ export const Footer = () => {
           </p>
         </div>
 
-        <div className="flex flex-col gap-1 w-full md:w-auto">
+        <div className="flex flex-col gap-1 w-full md:w-auto items-center md:items-start">
           <Link to="/cuenta" className="font-spartan font-bold text-base text-neutral-white hover:text-accent transition-colors">
             Tu cuenta
           </Link>
           <p className="text-sm text-gray-300 font-inter">
             Mis pedidos · Datos
           </p>
+
+          {isAdmin && (
+            <Link 
+              to="/admin" 
+              className="mt-1 inline-flex items-center gap-1.5 text-xs font-medium text-secondary hover:text-white transition-colors"
+              title="Ir al Panel de Administración"
+            >
+              <ShieldCheck size={14} />
+              Panel Admin
+            </Link>
+          )}
         </div>
 
         <div className="flex flex-col gap-1 w-full md:w-auto">

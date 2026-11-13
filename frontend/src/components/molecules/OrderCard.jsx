@@ -146,8 +146,8 @@ export const OrderCard = ({ order, onOrderUpdated }) => {
               {rawStatus === 'CONFIRMED' && (
                 <div className="mt-2 pt-3 border-t border-gray-100 flex justify-end">
                   <Button 
-                    variant="outline" 
-                    className="text-xs text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 min-h-8 py-1.5"
+                    variant="dangerOutline" 
+                    className="text-xs min-h-8 py-1.5"
                     onClick={handleOpenCancelModal}
                   >
                     <X size={14} className="mr-1 inline-block" />
@@ -196,11 +196,12 @@ export const OrderCard = ({ order, onOrderUpdated }) => {
             </Button>
 
             <Button 
+              variant="danger"
               type="button"
               onClick={confirmCancel}
               loading={cancelling}
               disabled={cancelling}
-              className="text-sm px-4 min-h-10 bg-red-600 hover:bg-red-700 text-white border-transparent focus:ring-2 focus:ring-red-500 focus:ring-offset-1 font-medium transition-colors"
+              className="text-sm px-4 min-h-10 border-transparent focus:ring-2 focus:ring-red-500 focus:ring-offset-1 font-medium transition-colors"
             >
               {cancelling ? 'Cancelando...' : 'Sí, cancelar'}
             </Button>

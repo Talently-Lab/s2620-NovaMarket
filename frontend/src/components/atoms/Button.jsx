@@ -15,6 +15,8 @@ export const Button = ({
     secondary: 'bg-secondary text-neutral-white hover:bg-secondary/90',
     outline: 'border-2 border-secondary text-secondary hover:bg-neutral-light',
     ghost: 'text-neutral-white/90 hover:text-neutral-white hover:bg-white/5',
+    danger: 'bg-red-600 text-white hover:bg-red-700',
+    dangerOutline: 'border-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300',
   };
 
   const widthStyle = fullWidth ? 'w-full' : 'w-fit';

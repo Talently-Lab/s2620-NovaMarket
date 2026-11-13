@@ -1,11 +1,12 @@
 import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // Agregamos useLocation
 import { AuthContext } from "../context/AuthContext";
 import { LOGIN_MENSAJES } from "../const/authMessages";
 
 export const useLogin = () => {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
@@ -62,11 +63,17 @@ export const useLogin = () => {
     setSubmitting(true);
 
     try {
-      await login({
+      const loggedUser = await login({
         email: currentEmail,
         password: currentPassword,
       });
-      navigate("/");
+
+      if (loggedUser?.role?.toUpperCase() === "ADMIN") {
+        navigate("/admin", { replace: true });
+      } else {
+        const origin = location.state?.from?.pathname || "/";
+        navigate(origin, { replace: true });
+      }
     } catch (err) {
       const status = err?.response?.status;
 

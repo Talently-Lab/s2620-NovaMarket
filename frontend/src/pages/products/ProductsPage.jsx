@@ -3,6 +3,7 @@ import { useProductsCatalog } from "../../hooks/useProductsCatalog";
 import { ProductCard } from "../../components/molecules/ProductCard";
 import { ProductCardSkeleton } from "../../components/molecules/ProductCardSkeleton";
 import { Button } from "../../components/atoms/Button";
+import { SortSelect } from "../../components/molecules/SortSelect";
 import {
   MARKETING_EMPTY_TEXT,
   SEARCH_EMPTY_TEXT,
@@ -16,14 +17,18 @@ export const ProductsPage = () => {
     loading,
     error,
     searchQuery,
+    sortOption,
     handleCategoryChange,
     handleClearSearch,
     handleResetCatalog,
+    handleSortChange,   
   } = useProductsCatalog();
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 md:px-6 py-8 flex flex-col gap-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 pb-6">
+      
+      <div className="flex flex-col gap-6 border-b border-gray-200 pb-6">
+        
         <div>
           <h1 className="font-spartan font-bold text-3xl text-primary">
             Catálogo de Productos
@@ -47,20 +52,28 @@ export const ProductsPage = () => {
           )}
         </div>
 
-        <div className="flex gap-2 overflow-x-auto pb-2">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => handleCategoryChange(cat)}
-              className={`cursor-pointer min-h-11 px-4 py-2 whitespace-nowrap rounded-lg font-inter text-sm font-semibold transition-colors ${
-                selectedCategory === cat
-                  ? "bg-secondary text-neutral-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          
+          <div className="shrink-0">
+            <SortSelect value={sortOption} onChange={handleSortChange} />
+          </div>
+          
+          <div className="flex gap-2 overflow-x-auto pb-2 lg:pb-0 hide-scrollbar w-full lg:w-auto lg:justify-end">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => handleCategoryChange(cat)}
+                className={`cursor-pointer shrink-0 min-h-11 px-4 py-2 whitespace-nowrap rounded-lg font-inter text-sm font-semibold transition-colors ${
+                  selectedCategory === cat
+                    ? "bg-secondary text-neutral-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+          
         </div>
       </div>
 

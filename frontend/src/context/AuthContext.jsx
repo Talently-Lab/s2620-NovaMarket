@@ -4,13 +4,15 @@ import { authService } from "../services/authService";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // Inicializamos el estado leyendo directamente el usuario guardado en localStorage
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : null;
+    try {
+      const savedUser = localStorage.getItem("user");
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch {
+      return null;
+    }
   });
-  
-  // Como ya no necesitamos consultar un endpoint externo al iniciar, loading pasa a false de entrada
+
   const [loading, setLoading] = useState(false);
 
   const login = async (credentials) => {
@@ -21,7 +23,9 @@ export const AuthProvider = ({ children }) => {
 
     const userData = data.user || data.usuario || data;
     setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData)); // Guardamos el usuario localmente
+    localStorage.setItem("user", JSON.stringify(userData));
+
+    return userData;
   };
 
   const register = async (userDataReq) => {
@@ -32,12 +36,14 @@ export const AuthProvider = ({ children }) => {
 
     const userData = data.user || data.usuario || data;
     setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData)); // Guardamos el usuario localmente
+    localStorage.setItem("user", JSON.stringify(userData));
+
+    return userData;
   };
 
   const logout = () => {
     localStorage.removeItem("token");
-    localStorage.removeItem("user"); // Limpiamos ambos al salir
+    localStorage.removeItem("user");
     setUser(null);
   };
 

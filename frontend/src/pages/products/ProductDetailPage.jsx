@@ -1,20 +1,13 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  ShoppingCart,
-  ShieldCheck,
-  Truck,
-  PackageX,
-  Plus,
-  Minus,
-} from "lucide-react";
+import { ShoppingCart, ShieldCheck, Truck, PackageX, Plus, Minus } from "lucide-react";
 import { useProductDetail } from "../../hooks/useProductDetail";
 import { ProductDetailSkeleton } from "../../components/molecules/ProductDetailSkeleton";
 import { Button } from "../../components/atoms/Button";
 import { AuthContext } from "../../context/AuthContext";
 import { useCart } from "../../context/CartContext";
 import { AddedToCartModal } from "../../components/molecules/AddedToCartModal";
+import { Breadcrumbs } from "../../components/molecules/Breadcrumbs";
 
 export const ProductDetailPage = () => {
   const { product, loading, error, handleImageError } = useProductDetail();
@@ -44,6 +37,18 @@ export const ProductDetailPage = () => {
     setIsModalOpen(true);
   };
 
+  const normalizeForUrl = (str = "") => 
+    str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+  const breadcrumbPaths = product ? [
+    { label: "Catálogo", path: "/categorias" },
+    { 
+      label: typeof product.category === "object" ? product.category?.name : product.category, 
+      path: `/categorias/${normalizeForUrl(typeof product.category === "object" ? product.category?.name : product.category)}` 
+    },
+    { label: product.name, path: "" }
+  ] : [];
+
   if (loading) return <ProductDetailSkeleton />;
 
   if (error || !product) {
@@ -65,12 +70,10 @@ export const ProductDetailPage = () => {
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4 md:px-6 py-8 animate-fade-in">
-      <Link
-        to="/categorias"
-        className="inline-flex items-center gap-2 font-inter text-sm font-medium text-gray-500 hover:text-primary transition-colors mb-6"
-      >
-        <ArrowLeft size={16} /> Volver al catálogo
-      </Link>
+      
+      <div className="mb-6">
+        <Breadcrumbs paths={breadcrumbPaths} />
+      </div>
 
       <div className="bg-neutral-white border border-gray-200 rounded-2xl p-6 md:p-8 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
         <div className="bg-[#F4F7FB] aspect-4/3 rounded-xl overflow-hidden flex items-center justify-center border border-gray-100">
@@ -127,7 +130,6 @@ export const ProductDetailPage = () => {
           </div>
 
           <div className="flex flex-col gap-4 mt-4">
-            {/* Selector de cantidad */}
             {product.stock > 0 && (
               <div className="flex items-center gap-4">
                 <span className="font-inter text-sm font-medium text-gray-700">
@@ -159,7 +161,6 @@ export const ProductDetailPage = () => {
               </div>
             )}
 
-            {/* Botón de Agregar */}
             <Button
               variant="secondary"
               type="button"
@@ -186,7 +187,6 @@ export const ProductDetailPage = () => {
         </div>
       </div>
 
-      {/* Modal interactivo de confirmación */}
       <AddedToCartModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
