@@ -97,8 +97,15 @@ export const useRegister = () => {
     try {
       setSubmitting(true);
       const { nombre, email, password } = datosNormalizados;
-      await register({ fullName: nombre, email, password });
-      navigate('/');
+      
+      const loggedUser = await register({ fullName: nombre, email, password });
+      
+      if (loggedUser?.role?.toUpperCase() === 'ADMIN') {
+        navigate('/admin', { replace: true });
+      } else {
+        navigate('/', { replace: true });
+      }
+
     } catch (err) {
       const status = err?.response?.status;
 
