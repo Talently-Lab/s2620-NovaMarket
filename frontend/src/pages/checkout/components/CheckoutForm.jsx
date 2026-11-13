@@ -38,12 +38,12 @@ export const CheckoutForm = ({
         label={
           <span className="flex items-center gap-1.5">
             <User size={16} className="text-secondary" aria-hidden="true" />
-            Nombre completo de quien recibe *
+            Nombre completo de quien recibe
           </span>
         }
         value={formData.fullName}
         onChange={handleChange}
-        placeholder="Ej: Talently Lab"
+        placeholder="Ej: Facundo Ledesma"
         autoComplete="name"
         error={fieldErrors.fullName}
         disabled={submitting}
@@ -57,7 +57,7 @@ export const CheckoutForm = ({
           label={
             <span className="flex items-center gap-1.5">
               <MapPin size={16} className="text-secondary" aria-hidden="true" />
-              Dirección de entrega *
+              Dirección de entrega
             </span>
           }
           value={formData.address}

@@ -29,15 +29,11 @@ export const Modal = ({
     const focusableSelectors =
       'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-    const currentFocus = document.activeElement;
-    const isFocusInsideModal = modalElement.contains(currentFocus);
-
-    if (!isFocusInsideModal) {
-      const focusableElements =
-        modalElement.querySelectorAll(focusableSelectors);
-      if (focusableElements.length > 0) {
-        focusableElements[0].focus();
-      }
+    const focusableElements = modalElement.querySelectorAll(focusableSelectors);
+    if (focusableElements.length > 0) {
+      setTimeout(() => {
+        if (modalRef.current) focusableElements[0].focus();
+      }, 0);
     }
 
     const handleKeyDown = (event) => {
@@ -73,7 +69,12 @@ export const Modal = ({
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      if (previousActiveElement.current && !isOpen) {
+      
+      if (
+        previousActiveElement.current &&
+        document.body.contains(previousActiveElement.current) &&
+        !isOpen
+      ) {
         previousActiveElement.current.focus();
       }
     };
@@ -81,20 +82,20 @@ export const Modal = ({
 
   if (!isOpen || !mounted) return null;
 
-
   return createPortal(
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-fade-in"
-      onClick={() => {
-        if (!disabledClose && onClose) onClose();
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget && !disabledClose && onClose) {
+          onClose();
+        }
       }}
     >
       <div
         ref={modalRef}
-        onClick={(e) => e.stopPropagation()}
         className={`bg-neutral-white w-full ${maxWidth} rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col max-h-[90vh]`}
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
@@ -122,5 +123,4 @@ export const Modal = ({
     </div>,
     document.body,
   );
-
 };
