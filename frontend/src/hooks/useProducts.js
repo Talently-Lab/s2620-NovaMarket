@@ -12,6 +12,9 @@ const CATEGORIES = [
   "Accesorios",
 ];
 
+const normalize = (str = "") =>
+  str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
 export const useProducts = (initialCategory = "Todos") => {
   const [allProducts, setAllProducts] = useState([]);
   const [products, setProducts] = useState([]);
@@ -45,19 +48,19 @@ export const useProducts = (initialCategory = "Todos") => {
   useEffect(() => {
     if (allProducts.length === 0) return;
 
-    if (!initialCategory || initialCategory.toLowerCase() === "todos") {
+    if (!initialCategory || normalize(initialCategory) === "todos") {
       setProducts(allProducts);
       setSelectedCategory("Todos");
     } else {
       const filtered = allProducts.filter((p) => {
         const cat = p.category?.name || p.category;
-        return cat?.toLowerCase() === initialCategory.toLowerCase();
+        return normalize(cat) === normalize(initialCategory);
       });
       setProducts(filtered);
 
       const categoriaCorrecta =
         CATEGORIES.find(
-          (c) => c.toLowerCase() === initialCategory.toLowerCase(),
+          (c) => normalize(c) === normalize(initialCategory),
         ) || initialCategory;
 
       setSelectedCategory(categoriaCorrecta);
@@ -69,7 +72,7 @@ export const useProducts = (initialCategory = "Todos") => {
     if (category === "Todos") {
       navigate("/categorias");
     } else {
-      navigate(`/categorias/${category.toLowerCase()}`);
+      navigate(`/categorias/${normalize(category)}`);
     }
   };
 
